@@ -2,7 +2,7 @@
   "name": "statsig",
   "displayName": "Statsig",
   "description": "",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "engines": {
     "vscode": "^1.56.0"
   },
@@ -10,14 +10,14 @@
     "Other"
   ],
   "activationEvents": [
-        "onCommand:statsig.helloWorld"
+     "onCommand:statsig.openConsole"
   ],
   "main": "./dist/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "statsig.helloWorld",
-        "title": "Hello World"
+        "command": "statsig.openConsole",
+        "title": "Statsig: Open Console"
       }
     ]
   },
