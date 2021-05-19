@@ -1,4 +1,5 @@
 import * as vsc from 'vscode';
+import { StatsigViewContainer } from './StatsigViewContainer';
 
 export function activate(context: vsc.ExtensionContext) {
   let disposable = vsc.commands.registerCommand('statsig.openConsole', () => {
@@ -6,6 +7,8 @@ export function activate(context: vsc.ExtensionContext) {
   });
 
   context.subscriptions.push(disposable);
+
+  new StatsigViewContainer(context);
 }
 
 export function deactivate() {}

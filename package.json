@@ -14,6 +14,30 @@
   ],
   "main": "./dist/extension.js",
   "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "statsig",
+          "title": "Statsig",
+          "icon": "media/logo.svg"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      { 
+        "view": "projects",
+        "contents": "Welcome to Statsig! 🙌\nPlease sign in to generate an access token.\n[Sign In](https://console.statsig.com/integrations/oauth/vscode)\nThis extension is open-source and [hosted on GitHub](https://github.com/statsig-io/statsig-code). Contributions are welcome--we might even send you a t-shirt!"
+      }
+    ],
+    "views": {
+      "statsig": [
+        {
+          "id": "projects",
+          "name": "",
+          "icon": "media/logo.svg"
+        }
+      ]
+    },
     "commands": [
       {
         "command": "statsig.openConsole",
