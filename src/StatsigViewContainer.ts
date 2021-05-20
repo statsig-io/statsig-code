@@ -18,6 +18,10 @@ class ProjectsProvider implements vsc.TreeDataProvider<Entry> {
 export class StatsigViewContainer {
   constructor(context: vsc.ExtensionContext) {
     const projectsProvider = new ProjectsProvider();
-    context.subscriptions.push(vsc.window.createTreeView('projects', { treeDataProvider: projectsProvider }));
+    context.subscriptions.push(
+      vsc.window.createTreeView('projects', {
+        treeDataProvider: projectsProvider,
+      }),
+    );
   }
 }

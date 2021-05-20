@@ -1,14 +1,19 @@
 import * as vsc from 'vscode';
 import { StatsigViewContainer } from './StatsigViewContainer';
 
-export function activate(context: vsc.ExtensionContext) {
-  let disposable = vsc.commands.registerCommand('statsig.openConsole', () => {
-    vsc.env.openExternal(vsc.Uri.parse('https://console.statsig.com'));
-  });
-
-  context.subscriptions.push(disposable);
+export function activate(context: vsc.ExtensionContext): void {
+  context.subscriptions.push(
+    vsc.commands.registerCommand('statsig.openConsole', () => {
+      void vsc.env.openExternal(vsc.Uri.parse('https://console.statsig.com'));
+    }),
+    vsc.commands.registerCommand('statsig.openConsole', () => {
+      void vsc.env.openExternal(vsc.Uri.parse('https://console.statsig.com'));
+    }),
+  );
 
   new StatsigViewContainer(context);
 }
 
-export function deactivate() {}
+export function deactivate(): void {
+  //
+}
