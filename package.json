@@ -1,8 +1,14 @@
 {
   "name": "statsig",
   "displayName": "Statsig",
+  "publisher": "Statsig",
   "description": "",
   "version": "0.1.0",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/statsig-io/statsig-code.git"
+  },
   "engines": {
     "vscode": "^1.56.0"
   },
@@ -10,6 +16,7 @@
     "Other"
   ],
   "activationEvents": [
+    "onView:projects",
     "onCommand:statsig.openConsole"
   ],
   "main": "./dist/extension.js",
