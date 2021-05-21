@@ -1,5 +1,5 @@
 {
-  "name": "statsig",
+  "name": "code",
   "displayName": "Statsig",
   "publisher": "Statsig",
   "description": "",
@@ -17,7 +17,8 @@
   ],
   "activationEvents": [
     "onView:projects",
-    "onCommand:statsig.openConsole"
+    "onCommand:statsig.openConsole",
+    "onCommand:statsig.signIn"
   ],
   "main": "./dist/extension.js",
   "contributes": {
@@ -33,7 +34,7 @@
     "viewsWelcome": [
       {
         "view": "projects",
-        "contents": "Welcome to Statsig! 🙌\nPlease sign in to generate an access token.\n[Sign In](https://console.statsig.com/integrations/oauth/vscode)\nThis extension is open-source and [hosted on GitHub](https://github.com/statsig-io/statsig-code). Contributions are welcome--we might even send you a t-shirt!"
+        "contents": "Welcome to Statsig! 🙌\nPlease sign in to generate an access token.\n[Sign In](https://console.statsig.com/integrations/vscode)\nThis extension is open-source and [hosted on GitHub](https://github.com/statsig-io/statsig-code). Contributions are welcome--we might even send you a t-shirt!"
       }
     ],
     "views": {
@@ -48,7 +49,11 @@
     "commands": [
       {
         "command": "statsig.openConsole",
-        "title": "Statsig: Open Console"
+        "title": "Statsig: Open Console (in Browser)"
+      },
+      {
+        "command": "statsig.signIn",
+        "title": "Statsig: Sign In with Access Token"
       }
     ]
   },

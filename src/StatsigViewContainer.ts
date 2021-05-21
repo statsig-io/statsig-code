@@ -6,11 +6,11 @@ interface Entry {
 }
 
 class ProjectsProvider implements vsc.TreeDataProvider<Entry> {
-  getTreeItem(element: Entry): vsc.TreeItem | Thenable<vsc.TreeItem> {
+  getTreeItem(_element: Entry): vsc.TreeItem | Thenable<vsc.TreeItem> {
     return new vsc.TreeItem('TreeItem');
   }
 
-  getChildren(element?: Entry): vsc.ProviderResult<Entry[]> {
+  getChildren(_element?: Entry): vsc.ProviderResult<Entry[]> {
     return [];
   }
 }
