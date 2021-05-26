@@ -16,7 +16,7 @@
     "Other"
   ],
   "activationEvents": [
-    "onView:projects",
+    "onView:statsig.projects",
     "onCommand:statsig.openConsole",
     "onCommand:statsig.signIn"
   ],
@@ -33,20 +33,25 @@
     },
     "viewsWelcome": [
       {
-        "view": "projects",
+        "view": "statsig.projects",
         "contents": "Welcome to Statsig! 🙌\nPlease sign in to generate an access token.\n[Sign In](https://console.statsig.com/integrations/vscode)\nThis extension is open-source and [hosted on GitHub](https://github.com/statsig-io/statsig-code). Contributions are welcome--we might even send you a t-shirt!"
       }
     ],
     "views": {
       "statsig": [
         {
-          "id": "projects",
-          "name": "",
+          "id": "statsig.projects",
+          "name": "Projects",
           "icon": "media/logo.svg"
         }
       ]
     },
     "commands": [
+      {
+        "command": "statsig.openConfigInBrowser",
+        "title": "Open in Browser",
+        "icon": "$(ports-open-browser-icon)"
+      },
       {
         "command": "statsig.openConsole",
         "title": "Statsig: Open Console (in Browser)"
@@ -55,7 +60,22 @@
         "command": "statsig.signIn",
         "title": "Statsig: Sign In with Access Token"
       }
-    ]
+    ],
+    "menus": {
+      "view/item/context": [
+        {
+          "command": "statsig.openConfigInBrowser",
+          "when": "viewItem == api_config",
+          "group": "inline"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "statsig.openConfigInBrowser",
+          "when": "false"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "yarn run package",
@@ -86,5 +106,8 @@
     "vscode-test": "^1.5.0",
     "webpack": "^5.19.0",
     "webpack-cli": "^4.4.0"
+  },
+  "dependencies": {
+    "axios": "^0.21.1"
   }
 }

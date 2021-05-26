@@ -1,18 +1,31 @@
 import * as vsc from 'vscode';
+import axios from 'axios';
 
 let ctx: vsc.ExtensionContext;
 
-export default function run(inToken: string): Thenable<void> {
+export default async function run(inToken: string): Promise<void> {
   const token = inToken?.trim();
   if (!token) {
     throw new Error('Invalid auth token!');
   }
 
-  // Attempt an API call to validate the token can auth.
-  // TODO
+  // Perform an initial fetch of all projects. This validates the token and initializes the extension.
+  const projectsResponse = await axios.post(
+    'https://latest.api.statsig.com/developer/v1/projects',
+    {},
+    { headers: { 'statsig-api-key': token } },
+  );
 
-  // Store the token locally.
-  return ctx.globalState.update('auth', token);
+  if (projectsResponse.status >= 300) {
+    throw new Error(
+      `Could not use the provided token.  Status Code: ${projectsResponse.status}`,
+    );
+  }
+
+  await Promise.all([
+    ctx.globalState.update('projects', projectsResponse.data),
+    ctx.globalState.update('auth', token),
+  ]);
 }
 
 export function register(context: vsc.ExtensionContext): vsc.Disposable {
