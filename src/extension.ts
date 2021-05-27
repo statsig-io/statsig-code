@@ -3,7 +3,8 @@ import * as openConsole from './commands/openConsole';
 import * as signIn from './commands/signIn';
 import * as signOut from './commands/signOut';
 import * as fetchConfigs from './commands/fetchConfigs';
-import * as openConfigInBrowser from './commands/openConfigInBrowser';
+import * as openConfigInConsole from './commands/openConfigInConsole';
+import * as openTreeViewEntryInBrowser from './commands/openTreeViewEntryInBrowser';
 import UriHandler from './UriHandler';
 import ProjectsProvider from './providers/projects';
 
@@ -14,7 +15,8 @@ export function activate(context: vsc.ExtensionContext): void {
   });
 
   context.subscriptions.push(
-    openConfigInBrowser.register(context),
+    openTreeViewEntryInBrowser.register(context),
+    openConfigInConsole.register(context),
     openConsole.register(context),
     signIn.register(context),
     signOut.register(context, projectsProvider),

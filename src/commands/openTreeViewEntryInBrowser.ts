@@ -12,7 +12,7 @@ export default function run(e: APIConfigEntry): void {
 
 export function register(_context: vsc.ExtensionContext): vsc.Disposable {
   return vsc.commands.registerCommand(
-    'statsig.openConfigInBrowser',
+    'statsig.openTreeViewEntryInBrowser',
     (e: APIConfigEntry) => {
       run(e);
     },
