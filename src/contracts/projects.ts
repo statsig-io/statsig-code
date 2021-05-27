@@ -6,11 +6,12 @@ export type DeveloperProject = {
   name: string;
   dynamic_configs: Array<APIConfigEntity>;
   feature_gates: Array<APIConfigEntity>;
-  time: number;
+  has_updates: boolean;
 };
 
 export type ProjectsContract = {
   projects: Array<DeveloperProject>;
+  time: number;
 };
 
 export type APIConfigEntity = {

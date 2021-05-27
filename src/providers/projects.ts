@@ -44,4 +44,15 @@ export default class ProjectsProvider implements vsc.TreeDataProvider<Entry> {
       ),
     );
   }
+
+  private _onDidChangeTreeData: vsc.EventEmitter<
+    Entry | undefined | null | void
+  > = new vsc.EventEmitter<Entry | undefined | null | void>();
+
+  readonly onDidChangeTreeData: vsc.Event<Entry | undefined | null | void> =
+    this._onDidChangeTreeData.event;
+
+  refresh(): void {
+    this._onDidChangeTreeData.fire();
+  }
 }

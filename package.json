@@ -59,6 +59,14 @@
       {
         "command": "statsig.signIn",
         "title": "Statsig: Sign In with Access Token"
+      },
+      {
+        "command": "statsig.signOut",
+        "title": "Statsig: Sign Out"
+      },
+      {
+        "command": "statsig.fetchConfigs",
+        "title": "Statsig: Fetch Latest Configs (Refresh)"
       }
     ],
     "menus": {
