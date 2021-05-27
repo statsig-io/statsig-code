@@ -58,21 +58,24 @@ export async function run(params?: {
     Date.now(),
   );
 
+  const data = projectsResponse.data as ProjectsContract;
+  data.projects?.sort((a, b) => a.name.localeCompare(b.name));
+  data.projects?.forEach((p) => {
+    p?.dynamic_configs?.sort((a, b) => a.name.localeCompare(b.name));
+    p?.feature_gates?.sort((a, b) => a.name.localeCompare(b.name));
+  });
+
   // This could all be linear, but not necessary while # of projects is small.
   let hasUpdates = false;
   let proUpdateProjects: Thenable<void>;
   if (sinceTime === undefined) {
     hasUpdates = true;
-    proUpdateProjects = ctx.globalState.update(
-      'projects',
-      projectsResponse.data,
-    );
+    proUpdateProjects = ctx.globalState.update('projects', data);
   } else {
     // Type correctness is enforced above.
     contract = contract as ProjectsContract;
 
     // Update projects.
-    const data = projectsResponse.data as ProjectsContract;
     contract.time = data.time;
     for (const project of data.projects) {
       if (project.has_updates) {
