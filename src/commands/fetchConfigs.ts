@@ -9,7 +9,7 @@ let prov: ProjectsProvider;
 export async function run(params?: {
   throttle?: boolean;
   token?: string;
-  stateless?: boolean;
+  incremental?: boolean;
   silent?: boolean;
 }): Promise<void> {
   const token: string | undefined =
@@ -23,9 +23,9 @@ export async function run(params?: {
     throw new Error('Not signed in.');
   }
 
-  let sinceTime = params?.stateless
-    ? undefined
-    : (ctx.globalState.get('projects') as ProjectsContract)?.time;
+  let sinceTime = params?.incremental
+    ? (ctx.globalState.get('projects') as ProjectsContract)?.time
+    : undefined;
 
   let contract: ProjectsContract | undefined;
   if (sinceTime) {

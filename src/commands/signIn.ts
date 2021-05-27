@@ -11,7 +11,7 @@ export default async function run(inToken: string): Promise<void> {
 
   // Perform an initial fetch of all projects. This validates the token and
   // initializes the extension.
-  await fetchConfigs.run({ token: token, stateless: true });
+  await fetchConfigs.run({ token: token });
   await ctx.globalState.update('auth', token);
 }
 

@@ -29,7 +29,7 @@ export function activate(context: vsc.ExtensionContext): void {
   // One day I'll make this interval customizable--or maybe you should!
   // The default matches the autofetch period of the Git extension.
   setInterval(function () {
-    void fetchConfigs.run({ silent: true });
+    void fetchConfigs.run({ silent: true, incremental: true });
   }, 3 * 60 * 1000).unref();
 }
 
