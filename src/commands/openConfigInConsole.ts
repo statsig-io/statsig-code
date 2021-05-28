@@ -1,13 +1,30 @@
 import * as vsc from 'vscode';
+import ProjectsState from '../state/ProjectsState';
 
 export default function run(name?: string): void {
   if (!name) {
     return;
   }
 
-  const type = name === 'feature_gate' ? 'gates' : 'dynamic_configs';
+  const configs = ProjectsState.instance.findConfig(name);
+  if (configs === null || configs.length === 0) {
+    void vsc.window.showErrorMessage(`No config found with name ${name}`);
+    return;
+  }
+
+  if (configs.length > 1) {
+    void vsc.window.showErrorMessage(
+      `Multiple configs found for name ${name}.  Unfortunately, Rodrigo hasn't implemented config selection yet.`,
+    );
+    return;
+  }
+
+  const config = configs[0];
+  const type = config.type === 'feature_gate' ? 'gates' : 'dynamic_configs';
   void vsc.env.openExternal(
-    vsc.Uri.parse(`https://console.statsig.com/${'projectID'}/${type}/${name}`),
+    vsc.Uri.parse(
+      `https://console.statsig.com/${config.projectID}/${type}/${name}`,
+    ),
   );
 }
 

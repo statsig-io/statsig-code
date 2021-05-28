@@ -17,8 +17,11 @@
   ],
   "activationEvents": [
     "onView:statsig.projects",
+    "onCommand:statsig.fetchConfigs",
     "onCommand:statsig.openConsole",
-    "onCommand:statsig.signIn"
+    "onCommand:statsig.signIn",
+    "onCommand:statsig.signOut",
+    "onCommand:statsig.openConfigInConsole"
   ],
   "main": "./dist/extension.js",
   "contributes": {

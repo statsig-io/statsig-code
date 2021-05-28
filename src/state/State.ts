@@ -4,7 +4,7 @@ export default abstract class State<T> {
   constructor(
     protected readonly key: string,
     protected ctx: vsc.ExtensionContext,
-    protected updateCallback?: () => void,
+    protected updateHook?: () => void,
   ) {
     this._value = ctx.globalState.get(this.key);
     this._updateTime = ctx.globalState.get(`${this.key}.updateTime`);
@@ -24,7 +24,7 @@ export default abstract class State<T> {
     const time = Date.now();
     await this.ctx.globalState.update(`${this.key}.updateTime`, time);
     this._updateTime = time;
-    this.updateCallback?.call(void 0);
+    this.updateHook?.call(void 0);
   }
 
   public async update(value: T): Promise<void> {
@@ -44,6 +44,7 @@ export default abstract class State<T> {
 
     this._value = value;
     this._updateTime = time;
-    this.updateCallback?.call(void 0);
+
+    this.updateHook?.call(void 0);
   }
 }
