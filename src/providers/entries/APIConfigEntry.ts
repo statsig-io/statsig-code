@@ -1,4 +1,5 @@
 import * as vsc from 'vscode';
+import { renderConfigInMarkdown } from '../../lib/configUtils';
 import { StatsigConfig } from '../../state/ProjectsState';
 import { Entry } from './Entry';
 
@@ -11,5 +12,6 @@ export abstract class APIConfigEntry extends Entry {
     return Promise.resolve([]);
   }
 
+  tooltip = renderConfigInMarkdown(this.data);
   contextValue = 'api_config';
 }
