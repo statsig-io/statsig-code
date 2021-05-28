@@ -1,6 +1,7 @@
 import axios from 'axios';
 import * as vsc from 'vscode';
 import { ProjectsContract } from '../contracts/projects';
+import { getTierPrefix } from '../lib/webUtils';
 import AuthState from '../state/AuthState';
 import ProjectsState from '../state/ProjectsState';
 
@@ -40,7 +41,7 @@ export async function run(params?: {
   }
 
   const projectsResponse = await axios.post(
-    'https://latest.api.statsig.com/developer/v1/projects',
+    `https://${getTierPrefix('api')}.statsig.com/developer/v1/projects`,
     { sinceTime: sinceTime },
     { headers: { 'statsig-api-key': token } },
   );

@@ -10,8 +10,10 @@ import ProjectsProvider from './providers/ProjectsProvider';
 import AuthState from './state/AuthState';
 import ProjectsState from './state/ProjectsState';
 import ConfigHoverProvider from './providers/ConfigHoverProvider';
+import getExtensionConfig from './state/getExtensionConfig';
 
 export function activate(context: vsc.ExtensionContext): void {
+  const config = getExtensionConfig();
   const projectsProvider = new ProjectsProvider(context);
   const statsigProjectsView = vsc.window.createTreeView('statsig.projects', {
     treeDataProvider: projectsProvider,
@@ -33,10 +35,12 @@ export function activate(context: vsc.ExtensionContext): void {
     statsigProjectsView,
   );
 
-  vsc.languages.registerHoverProvider(
-    { scheme: 'file' },
-    new ConfigHoverProvider(),
-  );
+  if (config.textEditor.enableHoverTooltips) {
+    vsc.languages.registerHoverProvider(
+      { scheme: 'file' },
+      new ConfigHoverProvider(),
+    );
+  }
 
   void fetchConfigs.run({
     throttle: true,
@@ -44,11 +48,11 @@ export function activate(context: vsc.ExtensionContext): void {
     incremental: true,
   });
 
-  // One day I'll make this interval customizable--or maybe you should!
-  // The default matches the autofetch period of the Git extension.
-  setInterval(function () {
-    void fetchConfigs.run({ silent: true, incremental: true });
-  }, 3 * 60 * 1000).unref();
+  if (config.refresh.inBackground) {
+    setInterval(function () {
+      void fetchConfigs.run({ silent: true, incremental: true });
+    }, Math.min(1, config.refresh.interval) * 60 * 1000).unref();
+  }
 }
 
 export function deactivate(): void {

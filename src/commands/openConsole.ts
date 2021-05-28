@@ -1,7 +1,10 @@
 import * as vsc from 'vscode';
+import { getTierPrefix } from '../lib/webUtils';
 
 export default function run(): void {
-  void vsc.env.openExternal(vsc.Uri.parse('https://console.statsig.com'));
+  void vsc.env.openExternal(
+    vsc.Uri.parse(`https://${getTierPrefix('console')}.statsig.com`),
+  );
 }
 
 export function register(_context: vsc.ExtensionContext): vsc.Disposable {

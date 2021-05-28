@@ -26,6 +26,45 @@
   ],
   "main": "./dist/extension.js",
   "contributes": {
+    "configuration": {
+      "title": "Statsig",
+      "properties": {
+        "statsig.refresh.InBackground": {
+          "type": "boolean",
+          "default": true,
+          "description": "Refresh Statsig projects in the background"
+        },
+        "statsig.refresh.interval": {
+          "type": "number",
+          "default": 3,
+          "description": "Duration (in minutes) between each background refresh."
+        },
+        "statsig.textEditor.enableHoverTooltips": {
+          "type": "boolean",
+          "default": true,
+          "description": "Whether to display a tooltip when hovering over strings that match a Statsig config."
+        },
+        "statsig.web.tier": {
+          "type": "string",
+          "default": "prod",
+          "markdownDescription": "The tier to use when making `https` api calls and console redirects. `prod` is recommended, any other value might be unstable.",
+          "enum": [
+            "prod",
+            "latest",
+            "us-west-2",
+            "us-east-2",
+            "ap-south-1"
+          ],
+          "enumDescriptions": [
+            "Automatically chooses a live tier with low latency.",
+            "Canary, Continuous-Deployment tier. Might be unstable.",
+            "Oregon, US.",
+            "Ohio, US.",
+            "Mumbai, IN."
+          ]
+        }
+      }
+    },
     "viewsContainers": {
       "activitybar": [
         {

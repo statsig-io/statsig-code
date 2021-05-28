@@ -1,10 +1,11 @@
 import * as vsc from 'vscode';
 import { APIConfigRule } from '../contracts/projects';
 import { StatsigConfig } from '../state/ProjectsState';
+import { getTierPrefix } from './webUtils';
 
 export function getConfigUrl(c: StatsigConfig): vsc.Uri {
   return vsc.Uri.parse(
-    `https://console.statsig.com/${c.projectID}/${
+    `https://${getTierPrefix('console')}.statsig.com/${c.projectID}/${
       c.type === 'feature_gate' ? 'gates' : 'dynamic_configs'
     }/${c.data.name}`,
   );
