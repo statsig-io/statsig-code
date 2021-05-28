@@ -1,7 +1,8 @@
 import * as vsc from 'vscode';
 import { APIConfigEntry } from '../providers/entries/APIConfigEntry';
+import { StatsigConfig } from '../state/ProjectsState';
 
-export default function run(e: APIConfigEntry): void {
+export default function run(e: StatsigConfig): void {
   const type = e.data.type === 'feature_gate' ? 'gates' : 'dynamic_configs';
   void vsc.env.openExternal(
     vsc.Uri.parse(
@@ -14,7 +15,7 @@ export function register(_context: vsc.ExtensionContext): vsc.Disposable {
   return vsc.commands.registerCommand(
     'statsig.openTreeViewEntryInBrowser',
     (e: APIConfigEntry) => {
-      run(e);
+      run(e.data);
     },
   );
 }

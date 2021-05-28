@@ -9,21 +9,31 @@ export async function run(params?: {
   token?: string;
   incremental?: boolean;
   silent?: boolean;
-}): Promise<void> {
+}): Promise<boolean> {
   const token = params?.token ?? AuthState.instance.value;
   if (!token) {
     if (params?.silent) {
-      return;
+      return false;
     }
 
-    throw new Error('Not signed in.');
+    void vsc.window.showErrorMessage(`You're not signed in!`);
+    return false;
   }
 
-  let sinceTime = params?.incremental
-    ? ProjectsState.instance.value?.time
-    : undefined;
-
   let contract = ProjectsState.instance.value;
+  if (params?.throttle) {
+    if (
+      contract?.time === undefined ||
+      Math.abs(Date.now() - contract?.time) < 15 * 1000
+    ) {
+      // Assume it takes at least 15 seconds for someone to use console and
+      // mutate a config.
+      return false;
+    }
+  }
+
+  let sinceTime = params?.incremental ? contract?.time : undefined;
+
   if (sinceTime && !contract) {
     // Can't do an incremental update since there's no baseline.
     sinceTime = undefined;
@@ -37,14 +47,16 @@ export async function run(params?: {
 
   if (projectsResponse.status >= 300) {
     if (params?.silent) {
-      return;
+      return false;
     }
 
-    throw new Error(
+    void vsc.window.showErrorMessage(
       `Could not fetch Statsig data.  Status Code: ${
         projectsResponse.status
       }. Response: ${JSON.stringify(projectsResponse.data)}`,
     );
+
+    return false;
   }
 
   const data = projectsResponse.data as ProjectsContract;
@@ -92,6 +104,8 @@ export async function run(params?: {
   } else {
     await ProjectsState.instance.setFreshness();
   }
+
+  return true;
 }
 
 export function register(): vsc.Disposable {

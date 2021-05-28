@@ -1,4 +1,14 @@
-import { APIConfigEntity, APIConfigRule } from '../contracts/projects';
+import * as vsc from 'vscode';
+import { APIConfigRule } from '../contracts/projects';
+import { StatsigConfig } from '../state/ProjectsState';
+
+export function getConfigUrl(c: StatsigConfig): vsc.Uri {
+  return vsc.Uri.parse(
+    `https://console.statsig.com/${c.projectID}/${
+      c.type === 'feature_gate' ? 'gates' : 'dynamic_configs'
+    }/${c.data.name}`,
+  );
+}
 
 function matchesResult(rule: APIConfigRule, result: 'pass' | 'fail'): boolean {
   if (result === 'pass') {
@@ -21,22 +31,22 @@ export type StaticConfigResult = 'pass' | 'fail' | 'mixed';
 // GKs (eg disabled, or a single public group that always passes), and might
 // return 'mixed' incorrectly for complex GKs.
 export function getStaticResult(
-  config: APIConfigEntity,
+  config: StatsigConfig,
 ): StaticConfigResult | undefined {
   if (config.type !== 'feature_gate') {
     return undefined;
   }
 
-  const defaultResult = config.defaultValue ? 'pass' : 'fail';
+  const defaultResult = config.data.defaultValue ? 'pass' : 'fail';
 
   // Config uses the default value.
-  if (!config.enabled || config.rules.length === 0) {
+  if (!config.data.enabled || config.data.rules.length === 0) {
     return defaultResult;
   }
 
   // All rules match the default value.
   let alwaysDefault = true;
-  for (const rule of config.rules) {
+  for (const rule of config.data.rules) {
     if (!matchesResult(rule, defaultResult)) {
       alwaysDefault = false;
       break;
@@ -49,7 +59,7 @@ export function getStaticResult(
 
   // All rules match the public value.
   let publicResult: StaticConfigResult = 'mixed';
-  for (const rule of config.rules) {
+  for (const rule of config.data.rules) {
     if (!isPublic(rule)) {
       continue;
     }
@@ -67,7 +77,7 @@ export function getStaticResult(
     return 'mixed';
   }
 
-  for (const rule of config.rules) {
+  for (const rule of config.data.rules) {
     if (!matchesResult(rule, publicResult)) {
       return 'mixed';
     }
@@ -78,4 +88,41 @@ export function getStaticResult(
   }
 
   return publicResult;
+}
+
+export function renderConfigInMarkdown(
+  c: StatsigConfig,
+  includeProject?: boolean,
+): vsc.MarkdownString {
+  let body: string;
+  if (c.type === 'feature_gate') {
+    const staticResult = getStaticResult(c);
+    let resultDescription = '_true/false_ (open console to see rules)';
+    if (staticResult === 'pass') {
+      resultDescription = '_true_';
+    } else if (staticResult === 'fail') {
+      resultDescription = '_false_';
+    }
+
+    body = `Value: ${resultDescription}`;
+  } else {
+    body = `Default value:\n\n\`\`\`json\n${JSON.stringify(
+      c.data.defaultValue,
+      undefined,
+      2,
+    )}\n\`\`\``;
+  }
+
+  return new vsc.MarkdownString(
+    `
+#### Statsig ${c.type === 'feature_gate' ? 'gate' : 'config'} \`${c.data.name}\`
+${includeProject ? `Project: __${c.projectName}__` : ''}
+
+Status: _${c.data.enabled ? 'enabled' : 'disabled'}_
+
+${body}
+
+[Open in Console](${getConfigUrl(c).toString()})`,
+    true,
+  );
 }

@@ -17,14 +17,26 @@ export class ProjectEntry extends Entry {
       new ConfigGroupEntry(
         'Feature Gates',
         vsc.TreeItemCollapsibleState.Expanded,
-        this.data.id,
-        this.data.feature_gates,
+        this.data.feature_gates.map((c) => {
+          return {
+            projectID: this.data.id,
+            projectName: this.data.name,
+            type: 'feature_gate',
+            data: c,
+          };
+        }),
       ),
       new ConfigGroupEntry(
         'Dynamic Configs',
         vsc.TreeItemCollapsibleState.Expanded,
-        this.data.id,
-        this.data.dynamic_configs,
+        this.data.dynamic_configs.map((c) => {
+          return {
+            projectID: this.data.id,
+            projectName: this.data.name,
+            type: 'dynamic_config',
+            data: c,
+          };
+        }),
       ),
     ]);
   }

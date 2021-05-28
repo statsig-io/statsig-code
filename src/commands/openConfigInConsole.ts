@@ -1,4 +1,6 @@
 import * as vsc from 'vscode';
+import { getConfigUrl } from '../lib/configUtils';
+import { CONFIG_NAME_REGEX } from '../lib/languageUtils';
 import ProjectsState, { StatsigConfig } from '../state/ProjectsState';
 
 export default async function run(name?: string): Promise<void> {
@@ -40,12 +42,7 @@ export default async function run(name?: string): Promise<void> {
     config = matchingConfig;
   }
 
-  const type = config.type === 'feature_gate' ? 'gates' : 'dynamic_configs';
-  void vsc.env.openExternal(
-    vsc.Uri.parse(
-      `https://console.statsig.com/${config.projectID}/${type}/${name}`,
-    ),
-  );
+  void vsc.env.openExternal(getConfigUrl(config));
 }
 
 export function register(_context: vsc.ExtensionContext): vsc.Disposable {
@@ -66,6 +63,7 @@ export function register(_context: vsc.ExtensionContext): vsc.Disposable {
         } else {
           range = vsc.window.activeTextEditor?.document.getWordRangeAtPosition(
             selection.end,
+            CONFIG_NAME_REGEX,
           );
         }
 

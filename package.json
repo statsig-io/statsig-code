@@ -16,6 +16,7 @@
     "Other"
   ],
   "activationEvents": [
+    "onFileSystem:file",
     "onView:statsig.projects",
     "onCommand:statsig.fetchConfigs",
     "onCommand:statsig.openConsole",

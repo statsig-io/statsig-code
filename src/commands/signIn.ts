@@ -5,13 +5,16 @@ import * as fetchConfigs from './fetchConfigs';
 export default async function run(inToken: string): Promise<void> {
   const token = inToken?.trim();
   if (!token) {
-    throw new Error('Invalid auth token!');
+    void vsc.window.showErrorMessage(`Invalid auth token!`);
+    return;
   }
 
   // Perform an initial fetch of all projects. This validates the token and
   // initializes the extension.
-  await fetchConfigs.run({ token: token });
-  await AuthState.instance.update(token);
+  const success = await fetchConfigs.run({ token: token });
+  if (success) {
+    await AuthState.instance.update(token);
+  }
 }
 
 export function register(): vsc.Disposable {

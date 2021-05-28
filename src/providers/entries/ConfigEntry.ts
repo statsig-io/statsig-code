@@ -1,19 +1,13 @@
-import * as vsc from 'vscode';
-import { APIConfigEntity } from '../../contracts/projects';
-import { APIConfigEntry, configDisabledIcon } from './APIConfigEntry';
-
-const configEnabledIcon = new vsc.ThemeIcon(
-  'circle-outline',
-  new vsc.ThemeColor('charts.green'),
-);
+import { CONFIG_ENABLED_ICON, CONFIG_DISABLED_ICON } from '../../icons';
+import { StatsigConfig } from '../../state/ProjectsState';
+import { APIConfigEntry } from './APIConfigEntry';
 
 export class ConfigEntry extends APIConfigEntry {
-  constructor(
-    public readonly projectID: string,
-    public readonly data: APIConfigEntity,
-  ) {
-    super(projectID, data);
+  constructor(public readonly data: StatsigConfig) {
+    super(data);
   }
 
-  iconPath = this.data.enabled ? configEnabledIcon : configDisabledIcon;
+  iconPath = this.data.data.enabled
+    ? CONFIG_ENABLED_ICON
+    : CONFIG_DISABLED_ICON;
 }

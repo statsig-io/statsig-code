@@ -6,9 +6,10 @@ import * as fetchConfigs from './commands/fetchConfigs';
 import * as openConfigInConsole from './commands/openConfigInConsole';
 import * as openTreeViewEntryInBrowser from './commands/openTreeViewEntryInBrowser';
 import UriHandler from './UriHandler';
-import ProjectsProvider from './providers/projects';
+import ProjectsProvider from './providers/ProjectsProvider';
 import AuthState from './state/AuthState';
 import ProjectsState from './state/ProjectsState';
+import ConfigHoverProvider from './providers/ConfigHoverProvider';
 
 export function activate(context: vsc.ExtensionContext): void {
   const projectsProvider = new ProjectsProvider(context);
@@ -31,6 +32,17 @@ export function activate(context: vsc.ExtensionContext): void {
     vsc.window.registerTreeDataProvider('statsig.projects', projectsProvider),
     statsigProjectsView,
   );
+
+  vsc.languages.registerHoverProvider(
+    { scheme: 'file' },
+    new ConfigHoverProvider(),
+  );
+
+  void fetchConfigs.run({
+    throttle: true,
+    silent: true,
+    incremental: true,
+  });
 
   // One day I'll make this interval customizable--or maybe you should!
   // The default matches the autofetch period of the Git extension.
