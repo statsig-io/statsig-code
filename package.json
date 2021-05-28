@@ -54,7 +54,8 @@
       },
       {
         "command": "statsig.openConsole",
-        "title": "Statsig: Open Console (in Browser)"
+        "title": "Statsig: Open Console (in Browser)",
+        "icon": "$(ports-open-browser-icon)"
       },
       {
         "command": "statsig.openConfigInConsole",
@@ -79,6 +80,13 @@
         {
           "command": "statsig.fetchConfigs",
           "group": "navigation"
+        },
+        {
+          "command": "statsig.openConsole",
+          "group": "navigation"
+        },
+        {
+          "command": "statsig.signOut"
         }
       ],
       "view/item/context": [
@@ -99,7 +107,7 @@
       {
         "command": "statsig.openConfigInConsole",
         "key": "ctrl+alt+g",
-        "mac": "cmd+alt+g"
+        "mac": "ctrl+cmd+g"
       }
     ]
   },

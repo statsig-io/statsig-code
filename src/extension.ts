@@ -7,6 +7,8 @@ import * as openConfigInConsole from './commands/openConfigInConsole';
 import * as openTreeViewEntryInBrowser from './commands/openTreeViewEntryInBrowser';
 import UriHandler from './UriHandler';
 import ProjectsProvider from './providers/projects';
+import AuthState from './state/AuthState';
+import ProjectsState from './state/ProjectsState';
 
 export function activate(context: vsc.ExtensionContext): void {
   const projectsProvider = new ProjectsProvider(context);
@@ -14,13 +16,17 @@ export function activate(context: vsc.ExtensionContext): void {
     treeDataProvider: projectsProvider,
   });
 
+  const refreshProjectsView = () => projectsProvider.refresh();
+  AuthState.init(context, refreshProjectsView);
+  ProjectsState.init(context, refreshProjectsView);
+
   context.subscriptions.push(
     openTreeViewEntryInBrowser.register(context),
     openConfigInConsole.register(context),
     openConsole.register(context),
-    signIn.register(context),
-    signOut.register(context, projectsProvider),
-    fetchConfigs.register(context, projectsProvider),
+    signIn.register(),
+    signOut.register(),
+    fetchConfigs.register(),
     vsc.window.registerUriHandler(new UriHandler()),
     vsc.window.registerTreeDataProvider('statsig.projects', projectsProvider),
     statsigProjectsView,

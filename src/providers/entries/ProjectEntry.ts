@@ -16,13 +16,13 @@ export class ProjectEntry extends Entry {
     return Promise.resolve([
       new ConfigGroupEntry(
         'Feature Gates',
-        vsc.TreeItemCollapsibleState.Collapsed,
+        vsc.TreeItemCollapsibleState.Expanded,
         this.data.id,
         this.data.feature_gates,
       ),
       new ConfigGroupEntry(
         'Dynamic Configs',
-        vsc.TreeItemCollapsibleState.Collapsed,
+        vsc.TreeItemCollapsibleState.Expanded,
         this.data.id,
         this.data.dynamic_configs,
       ),

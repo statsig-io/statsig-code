@@ -1,25 +1,15 @@
 import * as vsc from 'vscode';
-import ProjectsProvider from '../providers/projects';
-
-let ctx: vsc.ExtensionContext;
-let prov: ProjectsProvider;
+import AuthState from '../state/AuthState';
+import ProjectsState from '../state/ProjectsState';
 
 export default async function run(): Promise<void> {
   await Promise.all([
-    ctx.globalState.update('auth', undefined),
-    ctx.globalState.update('projects', undefined),
-    ctx.globalState.update('projects.updateTime', undefined),
+    AuthState.instance.clear(),
+    ProjectsState.instance.clear(),
   ]);
-
-  prov.refresh();
 }
 
-export function register(
-  context: vsc.ExtensionContext,
-  provider: ProjectsProvider,
-): vsc.Disposable {
-  ctx = context;
-  prov = provider;
+export function register(): vsc.Disposable {
   return vsc.commands.registerCommand('statsig.signOut', async () => {
     await run();
   });

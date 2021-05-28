@@ -1,10 +1,8 @@
 import axios from 'axios';
 import * as vsc from 'vscode';
 import { ProjectsContract } from '../contracts/projects';
-import ProjectsProvider from '../providers/projects';
-
-let ctx: vsc.ExtensionContext;
-let prov: ProjectsProvider;
+import AuthState from '../state/AuthState';
+import ProjectsState from '../state/ProjectsState';
 
 export async function run(params?: {
   throttle?: boolean;
@@ -12,9 +10,7 @@ export async function run(params?: {
   incremental?: boolean;
   silent?: boolean;
 }): Promise<void> {
-  const token: string | undefined =
-    params?.token ?? ctx.globalState.get('auth');
-
+  const token = params?.token ?? AuthState.instance.value;
   if (!token) {
     if (params?.silent) {
       return;
@@ -24,15 +20,13 @@ export async function run(params?: {
   }
 
   let sinceTime = params?.incremental
-    ? (ctx.globalState.get('projects') as ProjectsContract)?.time
+    ? ProjectsState.instance.value?.time
     : undefined;
 
-  let contract: ProjectsContract | undefined;
-  if (sinceTime) {
-    contract = await ctx.globalState.get('projects');
-    if (!contract) {
-      sinceTime = undefined;
-    }
+  let contract = ProjectsState.instance.value;
+  if (sinceTime && !contract) {
+    // Can't do an incremental update since there's no baseline.
+    sinceTime = undefined;
   }
 
   const projectsResponse = await axios.post(
@@ -53,11 +47,6 @@ export async function run(params?: {
     );
   }
 
-  const proUpdateTime = ctx.globalState.update(
-    'projects.updateTime',
-    Date.now(),
-  );
-
   const data = projectsResponse.data as ProjectsContract;
   data.projects?.sort((a, b) => a.name.localeCompare(b.name));
   data.projects?.forEach((p) => {
@@ -67,10 +56,9 @@ export async function run(params?: {
 
   // This could all be linear, but not necessary while # of projects is small.
   let hasUpdates = false;
-  let proUpdateProjects: Thenable<void>;
   if (sinceTime === undefined) {
+    contract = data;
     hasUpdates = true;
-    proUpdateProjects = ctx.globalState.update('projects', data);
   } else {
     // Type correctness is enforced above.
     contract = contract as ProjectsContract;
@@ -97,24 +85,16 @@ export async function run(params?: {
     contract.projects = contract.projects.filter((p) =>
       data.projects.find((pp) => pp.id === p.id),
     );
-
-    proUpdateProjects = ctx.globalState.update('projects', contract);
   }
 
-  await Promise.all([proUpdateTime, proUpdateProjects]);
   if (hasUpdates) {
-    // Reloads the entire view instead of just the entries that changed. We
-    // could optimize to refresh specific projects.
-    prov.refresh();
+    await ProjectsState.instance.update(contract);
+  } else {
+    await ProjectsState.instance.setFreshness();
   }
 }
 
-export function register(
-  context: vsc.ExtensionContext,
-  provider: ProjectsProvider,
-): vsc.Disposable {
-  ctx = context;
-  prov = provider;
+export function register(): vsc.Disposable {
   return vsc.commands.registerCommand(
     'statsig.fetchConfigs',
     async (params?: {

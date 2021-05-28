@@ -3,7 +3,7 @@ import * as vsc from 'vscode';
 import { ErrorEntry } from './entries/ErrorEntry';
 import { Entry } from './entries/Entry';
 import { ProjectEntry } from './entries/ProjectEntry';
-import { ProjectsContract } from '../contracts/projects';
+import ProjectsState from '../state/ProjectsState';
 
 export default class ProjectsProvider implements vsc.TreeDataProvider<Entry> {
   constructor(private ctx: vsc.ExtensionContext) {}
@@ -21,9 +21,7 @@ export default class ProjectsProvider implements vsc.TreeDataProvider<Entry> {
   }
 
   getRootChildren(): Thenable<Entry[]> {
-    const contract: ProjectsContract | undefined =
-      this.ctx.globalState.get('projects');
-
+    const contract = ProjectsState.instance.value;
     if (contract === undefined) {
       // User has not signed in yet.  An empty view will display default welcome content.
       return Promise.resolve([]);
@@ -40,7 +38,7 @@ export default class ProjectsProvider implements vsc.TreeDataProvider<Entry> {
     return Promise.resolve(
       projects.map(
         (p) =>
-          new ProjectEntry(p.name, vsc.TreeItemCollapsibleState.Collapsed, p),
+          new ProjectEntry(p.name, vsc.TreeItemCollapsibleState.Expanded, p),
       ),
     );
   }

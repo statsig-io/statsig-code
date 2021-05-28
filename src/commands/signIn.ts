@@ -1,7 +1,6 @@
 import * as vsc from 'vscode';
+import AuthState from '../state/AuthState';
 import * as fetchConfigs from './fetchConfigs';
-
-let ctx: vsc.ExtensionContext;
 
 export default async function run(inToken: string): Promise<void> {
   const token = inToken?.trim();
@@ -12,11 +11,10 @@ export default async function run(inToken: string): Promise<void> {
   // Perform an initial fetch of all projects. This validates the token and
   // initializes the extension.
   await fetchConfigs.run({ token: token });
-  await ctx.globalState.update('auth', token);
+  await AuthState.instance.update(token);
 }
 
-export function register(context: vsc.ExtensionContext): vsc.Disposable {
-  ctx = context;
+export function register(): vsc.Disposable {
   return vsc.commands.registerCommand('statsig.signIn', async () => {
     const token = await vsc.window.showInputBox({
       title: 'Sign In to Statsig',
