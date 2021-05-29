@@ -1,0 +1,28 @@
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 10.x
+      - run: yarn install --frozen-lockfile
+      - run: yarn test-compile
+      - run: yarn compile
+      - run: yarn lint
+        if: runner.os != 'Windows' # eslint on windows complains about CR/LF
+      - run: yarn package
+      - run: xvfb-run -a yarn test
+        if: runner.os == 'Linux'
+      - run: yarn test
+        if: runner.os == 'macOS'
