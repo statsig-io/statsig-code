@@ -13,5 +13,5 @@ export abstract class APIConfigEntry extends Entry {
   }
 
   tooltip = renderConfigInMarkdown(this.data);
-  contextValue = 'api_config';
+  contextValue = 'statsig_config';
 }

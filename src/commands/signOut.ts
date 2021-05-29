@@ -10,7 +10,8 @@ export default async function run(): Promise<void> {
 }
 
 export function register(): vsc.Disposable {
-  return vsc.commands.registerCommand('statsig.signOut', async () => {
-    await run();
-  });
+  return vsc.commands.registerCommand(
+    'statsig.signOut',
+    async () => await run(),
+  );
 }

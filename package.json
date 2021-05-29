@@ -115,6 +115,11 @@
         "icon": "$(ports-open-browser-icon)"
       },
       {
+        "command": "statsig.copyToClipboard",
+        "title": "Copy to Clipboard",
+        "icon": "$(files)"
+      },
+      {
         "command": "statsig.signIn",
         "title": "Statsig: Sign In with Access Token"
       },
@@ -139,12 +144,21 @@
       ],
       "view/item/context": [
         {
+          "command": "statsig.copyToClipboard",
+          "when": "viewItem == statsig_config",
+          "group": "inline"
+        },
+        {
           "command": "statsig.openTreeViewEntryInBrowser",
-          "when": "viewItem == api_config",
+          "when": "viewItem == statsig_config",
           "group": "inline"
         }
       ],
       "commandPalette": [
+        {
+          "command": "statsig.copyToClipboard",
+          "when": "false"
+        },
         {
           "command": "statsig.openTreeViewEntryInBrowser",
           "when": "false"

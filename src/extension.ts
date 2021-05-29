@@ -2,6 +2,7 @@ import * as vsc from 'vscode';
 import * as openConsole from './commands/openConsole';
 import * as signIn from './commands/signIn';
 import * as signOut from './commands/signOut';
+import * as copyToClipboard from './commands/copyToClipboard';
 import * as fetchConfigs from './commands/fetchConfigs';
 import * as openConfigInConsole from './commands/openConfigInConsole';
 import * as openTreeViewEntryInBrowser from './commands/openTreeViewEntryInBrowser';
@@ -40,12 +41,13 @@ export function activate(context: vsc.ExtensionContext): void {
   ProjectsState.init(context, refreshViews);
 
   context.subscriptions.push(
-    openTreeViewEntryInBrowser.register(context),
-    openConfigInConsole.register(context),
-    openConsole.register(context),
+    openTreeViewEntryInBrowser.register(),
+    openConfigInConsole.register(),
+    openConsole.register(),
     signIn.register(),
     signOut.register(),
     fetchConfigs.register(),
+    copyToClipboard.register(),
     vsc.window.registerUriHandler(new UriHandler()),
     vsc.window.registerTreeDataProvider('statsig.projects', projectsProvider),
     statsigProjectsView,

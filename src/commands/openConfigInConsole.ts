@@ -50,7 +50,7 @@ export default async function run(arg?: string | StatsigConfig): Promise<void> {
   void vsc.env.openExternal(getConfigUrl(config));
 }
 
-export function register(_context: vsc.ExtensionContext): vsc.Disposable {
+export function register(): vsc.Disposable {
   return vsc.commands.registerCommand(
     'statsig.openConfigInConsole',
     async (name?: string) => {

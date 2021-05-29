@@ -116,8 +116,6 @@ export function register(): vsc.Disposable {
       throttle?: boolean;
       token?: string;
       stateless?: boolean;
-    }) => {
-      await run(params);
-    },
+    }) => await run(params),
   );
 }

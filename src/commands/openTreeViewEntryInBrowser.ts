@@ -14,11 +14,9 @@ export default function run(e: StatsigConfig): void {
   );
 }
 
-export function register(_context: vsc.ExtensionContext): vsc.Disposable {
+export function register(): vsc.Disposable {
   return vsc.commands.registerCommand(
     'statsig.openTreeViewEntryInBrowser',
-    (e: APIConfigEntry) => {
-      run(e.data);
-    },
+    (e: APIConfigEntry) => run(e.data),
   );
 }

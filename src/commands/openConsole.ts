@@ -7,8 +7,6 @@ export default function run(): void {
   );
 }
 
-export function register(_context: vsc.ExtensionContext): vsc.Disposable {
-  return vsc.commands.registerCommand('statsig.openConsole', () => {
-    run();
-  });
+export function register(): vsc.Disposable {
+  return vsc.commands.registerCommand('statsig.openConsole', () => run());
 }
