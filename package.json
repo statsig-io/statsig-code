@@ -126,6 +126,10 @@
       {
         "command": "statsig.signOut",
         "title": "Statsig: Sign Out"
+      },
+      {
+        "command": "statsig.feelingLucky",
+        "title": "I'm feeling lucky"
       }
     ],
     "menus": {
@@ -140,6 +144,9 @@
         },
         {
           "command": "statsig.signOut"
+        },
+        {
+          "command": "statsig.feelingLucky"
         }
       ],
       "view/item/context": [
