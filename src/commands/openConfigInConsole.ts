@@ -3,43 +3,48 @@ import { getConfigUrl } from '../lib/configUtils';
 import { CONFIG_NAME_REGEX } from '../lib/languageUtils';
 import ProjectsState, { StatsigConfig } from '../state/ProjectsState';
 
-export default async function run(name?: string): Promise<void> {
-  if (!name) {
-    return;
-  }
-
-  const configs = ProjectsState.instance.findConfig(name);
-  if (configs === null || configs.length === 0) {
-    void vsc.window.showErrorMessage(`No config found with name ${name}`);
+export default async function run(arg?: string | StatsigConfig): Promise<void> {
+  if (!arg) {
     return;
   }
 
   let config: StatsigConfig;
-  if (configs.length === 1) {
-    config = configs[0];
+  if (typeof arg !== 'string') {
+    config = arg;
   } else {
-    const projectName = await vsc.window.showQuickPick(
-      configs.map((p) => p.projectName),
-      {
-        title: 'Select a project',
-        canPickMany: false,
-      },
-    );
-
-    if (projectName === undefined) {
+    const name = arg;
+    const configs = ProjectsState.instance.findConfig(name);
+    if (configs.length === 0) {
+      void vsc.window.showErrorMessage(`No config found with name ${name}`);
       return;
     }
 
-    const matchingConfig = configs.find((c) => c.projectName === projectName);
-    if (!matchingConfig) {
-      void vsc.window.showErrorMessage(
-        `No config with name ${name} in the selected Project. This is an extension bug, please report it.`,
+    if (configs.length === 1) {
+      config = configs[0];
+    } else {
+      const projectName = await vsc.window.showQuickPick(
+        configs.map((p) => p.projectName),
+        {
+          title: 'Select a project',
+          canPickMany: false,
+        },
       );
 
-      return;
-    }
+      if (projectName === undefined) {
+        return;
+      }
 
-    config = matchingConfig;
+      const matchingConfig = configs.find((c) => c.projectName === projectName);
+      if (!matchingConfig) {
+        void vsc.window.showErrorMessage(
+          `No config with name ${name} in the selected Project. This is an extension bug, please report it.`,
+        );
+
+        return;
+      }
+
+      config = matchingConfig;
+    }
   }
 
   void vsc.env.openExternal(getConfigUrl(config));
@@ -80,7 +85,7 @@ export function register(_context: vsc.ExtensionContext): vsc.Disposable {
           placeHolder: 'enable_im_feeling_lucky',
           value: prefill,
           validateInput: (value: string) => {
-            if (ProjectsState.instance.findConfig(value)) {
+            if (ProjectsState.instance.findConfig(value).length > 0) {
               return null;
             }
 

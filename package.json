@@ -2,7 +2,7 @@
   "name": "code",
   "displayName": "Statsig",
   "publisher": "Statsig",
-  "description": "",
+  "description": "Build. Measure. Ship!",
   "version": "0.1.0",
   "license": "ISC",
   "repository": {
@@ -43,6 +43,11 @@
           "type": "boolean",
           "default": true,
           "description": "Whether to display a tooltip when hovering over strings that match a Statsig config."
+        },
+        "statsig.textEditor.enableCodeLens": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether to display CodeLens tooltips."
         },
         "statsig.web.tier": {
           "type": "string",

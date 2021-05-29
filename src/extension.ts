@@ -11,6 +11,7 @@ import AuthState from './state/AuthState';
 import ProjectsState from './state/ProjectsState';
 import ConfigHoverProvider from './providers/ConfigHoverProvider';
 import getExtensionConfig from './state/getExtensionConfig';
+import ConfigCodeLensProvider from './providers/ConfigCodeLensProvider';
 
 export function activate(context: vsc.ExtensionContext): void {
   const config = getExtensionConfig();
@@ -19,9 +20,24 @@ export function activate(context: vsc.ExtensionContext): void {
     treeDataProvider: projectsProvider,
   });
 
-  const refreshProjectsView = () => projectsProvider.refresh();
-  AuthState.init(context, refreshProjectsView);
-  ProjectsState.init(context, refreshProjectsView);
+  const codeLensProvider = config.textEditor.enableCodeLens
+    ? new ConfigCodeLensProvider()
+    : undefined;
+
+  if (codeLensProvider) {
+    vsc.languages.registerCodeLensProvider(
+      { scheme: 'file' },
+      codeLensProvider,
+    );
+  }
+
+  const refreshViews = () => {
+    projectsProvider.refresh();
+    codeLensProvider?.refresh();
+  };
+
+  AuthState.init(context, refreshViews);
+  ProjectsState.init(context, refreshViews);
 
   context.subscriptions.push(
     openTreeViewEntryInBrowser.register(context),

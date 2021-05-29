@@ -30,8 +30,8 @@ export default class ProjectsState extends State<ProjectsContract> {
   }
 
   private configIndex: Map<string, StatsigConfig[]> = new Map();
-  public findConfig(name: string): StatsigConfig[] | null {
-    return this.configIndex.get(name) ?? null;
+  public findConfig(name: string): StatsigConfig[] {
+    return this.configIndex.get(name) ?? [];
   }
 
   private addConfigToIndex(

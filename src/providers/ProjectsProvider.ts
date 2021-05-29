@@ -8,6 +8,17 @@ import ProjectsState from '../state/ProjectsState';
 export default class ProjectsProvider implements vsc.TreeDataProvider<Entry> {
   constructor(private ctx: vsc.ExtensionContext) {}
 
+  private _onDidChangeTreeData: vsc.EventEmitter<
+    Entry | undefined | null | void
+  > = new vsc.EventEmitter<Entry | undefined | null | void>();
+
+  readonly onDidChangeTreeData: vsc.Event<Entry | undefined | null | void> =
+    this._onDidChangeTreeData.event;
+
+  refresh(): void {
+    this._onDidChangeTreeData.fire();
+  }
+
   getTreeItem(element: Entry): vsc.TreeItem | Thenable<vsc.TreeItem> {
     return element;
   }
@@ -41,16 +52,5 @@ export default class ProjectsProvider implements vsc.TreeDataProvider<Entry> {
           new ProjectEntry(p.name, vsc.TreeItemCollapsibleState.Expanded, p),
       ),
     );
-  }
-
-  private _onDidChangeTreeData: vsc.EventEmitter<
-    Entry | undefined | null | void
-  > = new vsc.EventEmitter<Entry | undefined | null | void>();
-
-  readonly onDidChangeTreeData: vsc.Event<Entry | undefined | null | void> =
-    this._onDidChangeTreeData.event;
-
-  refresh(): void {
-    this._onDidChangeTreeData.fire();
   }
 }

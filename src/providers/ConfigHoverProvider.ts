@@ -21,7 +21,7 @@ export default class ConfigHoverProvider implements vsc.HoverProvider {
 
     const name = token.substring(1, token.length - 1);
     const maybeOutdatedConfigs = ProjectsState.instance.findConfig(name);
-    if (maybeOutdatedConfigs === null || maybeOutdatedConfigs.length === 0) {
+    if (maybeOutdatedConfigs.length === 0) {
       return null;
     }
 
@@ -33,7 +33,7 @@ export default class ConfigHoverProvider implements vsc.HoverProvider {
       });
 
       const updatedConfigs = ProjectsState.instance.findConfig(name);
-      if (updatedConfigs === null || updatedConfigs.length === 0) {
+      if (updatedConfigs.length === 0) {
         return null;
       }
 
