@@ -71,7 +71,7 @@ export function activate(context: vsc.ExtensionContext): void {
   if (config.refresh.inBackground) {
     setInterval(function () {
       void fetchConfigs.run({ silent: true, incremental: true });
-    }, Math.min(1, config.refresh.interval) * 60 * 1000).unref();
+    }, Math.max(1, config.refresh.interval) * 60 * 1000).unref();
   }
 }
 
