@@ -1,9 +1,7 @@
 import * as vsc from 'vscode';
 
 export default function run(): void {
-  void vsc.env.openExternal(
-    vsc.Uri.parse(`https://www.youtube.com/watch?v=dQw4w9WgXcQ`),
-  );
+  void vsc.env.openExternal(vsc.Uri.parse(`https://www.statsig.com/lucky`));
 }
 
 export function register(): vsc.Disposable {

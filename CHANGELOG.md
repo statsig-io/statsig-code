@@ -1,5 +1,9 @@
 # Change Log
 
+### 1.0.3
+
+- Minor fixes to `statsig.feelingLucky`.
+
 ### 1.0.2
 
 - More descriptive error logging.

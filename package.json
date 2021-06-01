@@ -3,7 +3,7 @@
   "displayName": "Statsig",
   "publisher": "Statsig",
   "description": "Build. Measure. Ship!",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "license": "ISC",
   "homepage": "https://www.statsig.com",
   "repository": {
@@ -33,7 +33,8 @@
     "onCommand:statsig.openConsole",
     "onCommand:statsig.signIn",
     "onCommand:statsig.signOut",
-    "onCommand:statsig.openConfigInConsole"
+    "onCommand:statsig.openConfigInConsole",
+    "onCommand:statsig.feelingLucky"
   ],
   "main": "./dist/extension.js",
   "contributes": {
