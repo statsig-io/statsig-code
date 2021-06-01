@@ -3,18 +3,29 @@
   "displayName": "Statsig",
   "publisher": "Statsig",
   "description": "Build. Measure. Ship!",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "license": "ISC",
+  "homepage": "https://www.statsig.com",
   "repository": {
     "type": "git",
     "url": "https://github.com/statsig-io/statsig-code.git"
+  },
+  "bugs": {
+    "url": "https://github.com/statsig-io/statsig-code/issues",
+    "email": "support@statsig.com"
   },
   "engines": {
     "vscode": "^1.56.0"
   },
   "categories": [
+    "Data Science",
     "Other"
   ],
+  "icon": "media/icon.png",
+  "galleryBanner": {
+    "color": "#194B7D",
+    "theme": "dark"
+  },
   "activationEvents": [
     "onFileSystem:file",
     "onView:statsig.projects",
