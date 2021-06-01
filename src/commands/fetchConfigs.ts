@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosError, AxiosResponse } from 'axios';
 import * as vsc from 'vscode';
 import { ProjectsContract } from '../contracts/projects';
 import { getTierPrefix } from '../lib/webUtils';
@@ -40,27 +40,32 @@ export async function run(params?: {
     sinceTime = undefined;
   }
 
-  const projectsResponse = await axios.post(
-    `https://${getTierPrefix('api')}.statsig.com/developer/v1/projects`,
-    { sinceTime: sinceTime },
-    { headers: { 'statsig-api-key': token } },
-  );
+  let projectsResponse: AxiosResponse<ProjectsContract> | undefined = undefined;
+  try {
+    projectsResponse = await axios.post(
+      `https://${getTierPrefix('api')}.statsig.com/developer/v1/projects`,
+      { sinceTime: sinceTime },
+      { headers: { 'statsig-api-key': token } },
+    );
+  } catch (e: unknown) {
+    projectsResponse = (e as AxiosError)?.response;
+  }
 
-  if (projectsResponse.status >= 300) {
+  if (projectsResponse?.status !== 200) {
     if (params?.silent) {
       return false;
     }
 
     void vsc.window.showErrorMessage(
-      `Could not fetch Statsig data.  Status Code: ${
-        projectsResponse.status
-      }. Response: ${JSON.stringify(projectsResponse.data)}`,
+      `Could not fetch Statsig data.  Status Code: ${String(
+        projectsResponse?.status,
+      )}. Response: ${JSON.stringify(projectsResponse?.data)}`,
     );
 
     return false;
   }
 
-  const data = projectsResponse.data as ProjectsContract;
+  const data = projectsResponse?.data;
   data.projects?.sort((a, b) => a.name.localeCompare(b.name));
   data.projects?.forEach((p) => {
     p?.dynamic_configs?.sort((a, b) => a.name.localeCompare(b.name));
