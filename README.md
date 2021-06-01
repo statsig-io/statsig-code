@@ -33,6 +33,8 @@ This extension contributes the following settings:
 
 ## Release Notes
 
+Only major releases are documented here. See [CHANGELOG.md](CHANGELOG.md) for more details.
+
 ### 1.0.0
 
 Initial release. Features:
