@@ -3,11 +3,11 @@
   "displayName": "Statsig",
   "publisher": "Statsig",
   "description": "Build. Measure. Ship!",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "license": "ISC",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/statsig-io/statsig-code.git"
+    "url": "https://github.com/statsig-io/statsig-code.git"
   },
   "engines": {
     "vscode": "^1.56.0"

@@ -1,9 +1,10 @@
 # Change Log
 
-All notable changes to the "statsig" extension will be documented in this file.
+### 1.0.0
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
+Initial release. Features:
 
-## [Unreleased]
-
-- Initial release
+- Summary of your Flags and Configs.
+- Insights when Hovering over a Feature Flag or Dynamic Config.
+- CodeLens (enable in Settings).
+- Keyboard Shortcuts.
