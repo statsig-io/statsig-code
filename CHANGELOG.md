@@ -1,5 +1,9 @@
 # Change Log
 
+### 1.0.4
+
+- Fix to only display Statsig menu items in the Statsig view.
+
 ### 1.0.3
 
 - Minor fixes to `statsig.feelingLucky`.

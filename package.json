@@ -3,7 +3,7 @@
   "displayName": "Statsig",
   "publisher": "Statsig",
   "description": "Build. Measure. Ship!",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "license": "ISC",
   "homepage": "https://www.statsig.com",
   "repository": {
@@ -148,17 +148,21 @@
       "view/title": [
         {
           "command": "statsig.fetchConfigs",
-          "group": "navigation"
+          "group": "navigation",
+          "when": "view == statsig.projects"
         },
         {
           "command": "statsig.openConsole",
-          "group": "navigation"
+          "group": "navigation",
+          "when": "view == statsig.projects"
         },
         {
-          "command": "statsig.signOut"
+          "command": "statsig.signOut",
+          "when": "view == statsig.projects"
         },
         {
-          "command": "statsig.feelingLucky"
+          "command": "statsig.feelingLucky",
+          "when": "view == statsig.projects"
         }
       ],
       "view/item/context": [
