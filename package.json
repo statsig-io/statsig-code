@@ -3,7 +3,7 @@
   "displayName": "Statsig",
   "publisher": "Statsig",
   "description": "Build. Measure. Ship!",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "license": "ISC",
   "homepage": "https://www.statsig.com",
   "repository": {
@@ -41,7 +41,7 @@
     "configuration": {
       "title": "Statsig",
       "properties": {
-        "statsig.refresh.InBackground": {
+        "statsig.refresh.inBackground": {
           "type": "boolean",
           "default": true,
           "description": "Refresh Statsig projects in the background"

@@ -25,7 +25,7 @@
 
 This extension contributes the following settings:
 
-- `statsig.refresh.InBackground`: enable/disable incremental background refreshes of your flags and configs (refreshes while you're not interacting with the extension, so things are always up-to-date).
+- `statsig.refresh.inBackground`: enable/disable incremental background refreshes of your flags and configs (refreshes while you're not interacting with the extension, so things are always up-to-date).
 - `statsig.refresh.interval`: interval in minutes between each background refresh.
 - `statsig.textEditor.enableHoverTooltips`: enable/disable tooltips when hovering over strings that match flag/config names.
 - `statsig.textEditor.enableCodeLens`: enable/disable CodeLens on strings that match flag/config names. Disabled by default.

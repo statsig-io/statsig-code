@@ -3,7 +3,7 @@ import { getTierPrefix } from '../lib/webUtils';
 
 export default function run(): void {
   void vsc.env.openExternal(
-    vsc.Uri.parse(`https://${getTierPrefix('console')}.statsig.com`),
+    vsc.Uri.parse(`https://${getTierPrefix()}console.statsig.com`),
   );
 }
 

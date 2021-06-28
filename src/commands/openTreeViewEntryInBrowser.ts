@@ -7,7 +7,7 @@ export default function run(e: StatsigConfig): void {
   const type = e.data.type === 'feature_gate' ? 'gates' : 'dynamic_configs';
   void vsc.env.openExternal(
     vsc.Uri.parse(
-      `https://${getTierPrefix('console')}.statsig.com/${e.projectID}/${type}/${
+      `https://${getTierPrefix()}console.statsig.com/${e.projectID}/${type}/${
         e.data.name
       }`,
     ),
