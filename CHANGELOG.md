@@ -1,5 +1,9 @@
 # Change Log
 
+## 1.0.6
+
+- Upgrade dependencies. 
+
 ## 1.0.5
 
 - Update Statsig API subdomains.
