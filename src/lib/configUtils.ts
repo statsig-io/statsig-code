@@ -1,5 +1,5 @@
 import * as vsc from 'vscode';
-import { APIConfigRule } from '../contracts/projects';
+import { APIConfigEntity, APIConfigRule } from '../contracts/projects';
 import { StatsigConfig } from '../state/ProjectsState';
 import { getTierPrefix } from './webUtils';
 
@@ -25,6 +25,10 @@ function isPublic(rule: APIConfigRule): boolean {
   }
 
   return rule.conditions[0].type === 'public';
+}
+
+function isStale(config: APIConfigEntity): boolean {
+  return config.extraData.checksInPast30Days === 0;
 }
 
 export type StaticConfigResult = 'pass' | 'fail' | 'mixed';
@@ -112,6 +116,10 @@ export function renderConfigInMarkdown(
       undefined,
       2,
     )}\n\`\`\``;
+  }
+
+  if (c.data.extraData.checksInPast30Days !== undefined) {
+    body = `${body} \n\n Checks in past 30 days: ${c.data.extraData.checksInPast30Days}`;
   }
 
   return new vsc.MarkdownString(
