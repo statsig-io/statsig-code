@@ -1,6 +1,7 @@
 import * as vsc from 'vscode';
 import { APIConfigEntity, APIConfigRule } from '../contracts/projects';
 import { StatsigConfig } from '../state/ProjectsState';
+import ProjectsState from '../state/ProjectsState';
 import { getTierPrefix } from './webUtils';
 
 export function getConfigUrl(c: StatsigConfig): vsc.Uri {
@@ -27,8 +28,11 @@ function isPublic(rule: APIConfigRule): boolean {
   return rule.conditions[0].type === 'public';
 }
 
-function isStale(config: APIConfigEntity): boolean {
-  return config.extraData.checksInPast30Days === 0;
+export function getStaleConfig(configName: string): StatsigConfig[] {
+  const configs = ProjectsState.instance.findConfig(configName);
+  return configs.filter(
+    (config) => config.data.extraData.checksInPast30Days === 0,
+  );
 }
 
 export type StaticConfigResult = 'pass' | 'fail' | 'mixed';
