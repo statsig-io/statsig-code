@@ -15,6 +15,11 @@ import ConfigHoverProvider from './providers/ConfigHoverProvider';
 import getExtensionConfig from './state/getExtensionConfig';
 import ConfigCodeLensProvider from './providers/ConfigCodeLensProvider';
 import { subscribeToDocumentChanges } from './providers/diagnostics';
+import { getAllStaleConfigs } from './lib/configUtils';
+import {
+  registerCommands,
+  ConfigCodeActionProvider,
+} from './providers/ConfigCodeActionProvider';
 
 export function activate(context: vsc.ExtensionContext): void {
   const config = getExtensionConfig();
@@ -63,12 +68,25 @@ export function activate(context: vsc.ExtensionContext): void {
 
   subscribeToDocumentChanges(context, staleConfigDiagnostic);
 
+  // const allStaleConfigs = getAllStaleConfigs().map(
+  //   (config) => config.data.name,
+  // );
   if (config.textEditor.enableHoverTooltips) {
     vsc.languages.registerHoverProvider(
       { scheme: 'file' },
       new ConfigHoverProvider(),
     );
   }
+
+  // if (config.textEditor.enableCodeActions)
+  vsc.languages.registerCodeActionsProvider(
+    { scheme: 'file' },
+    new ConfigCodeActionProvider(),
+    {
+      providedCodeActionKinds: ConfigCodeActionProvider.providedCodeActionKinds,
+    },
+  );
+  registerCommands(context);
 
   void fetchConfigs.run({
     throttle: true,

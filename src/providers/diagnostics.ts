@@ -24,15 +24,15 @@ export function refreshDiagnostics(
     if (configSearch !== null) {
       configSearch.forEach((match) => {
         const configName = match.substring(1, match.length - 1);
-        getStaleConfig(configName).forEach((config) => {
+        if (getStaleConfig(configName).length > 0) {
           diagnostics.push(
             createDiagnostic(DiagnosticCode.staleCheck, {
               lineOfText,
               lineIndex,
-              config,
+              configName,
             }),
           );
-        });
+        }
       });
     }
   }
@@ -45,14 +45,13 @@ function createDiagnostic(
   metadata: {
     lineOfText: vsc.TextLine;
     lineIndex: number;
-    config: StatsigConfig;
+    configName: string;
   },
 ): vsc.Diagnostic {
   let diagnostic: vsc.Diagnostic;
   switch (diagnosticCode) {
     case DiagnosticCode.staleCheck: {
-      const { lineOfText, lineIndex, config } = metadata;
-      const configName = config.data.name;
+      const { lineOfText, lineIndex, configName } = metadata;
       const index = lineOfText.text.indexOf(configName);
 
       const range = new vsc.Range(
@@ -68,6 +67,7 @@ function createDiagnostic(
         vsc.DiagnosticSeverity.Information,
       );
       diagnostic.code = DiagnosticCode.staleCheck;
+      diagnostic.source = configName;
     }
   }
   return diagnostic;

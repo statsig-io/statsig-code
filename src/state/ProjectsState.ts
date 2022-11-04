@@ -34,6 +34,10 @@ export default class ProjectsState extends State<ProjectsContract> {
     return this.configIndex.get(name) ?? [];
   }
 
+  public getConfigIndex(): Map<string, StatsigConfig[]> {
+    return this.configIndex;
+  }
+
   private addConfigToIndex(
     proj: DeveloperProject,
     ent: APIConfigEntity,

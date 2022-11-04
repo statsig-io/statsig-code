@@ -21,8 +21,7 @@ export type APIConfigEntity = {
   defaultValue: boolean | Record<string, any>;
   enabled: boolean;
   rules: Array<APIConfigRule>;
-  extraData: APIConfigSpecExtraData;
-};
+} & APIConfigSpecExtraData;
 
 export type APIConfigSpecExtraData = {
   checksInPast30Days?: number;
