@@ -1,5 +1,5 @@
 import * as vsc from 'vscode';
-import { APIConfigEntity, APIConfigRule } from '../contracts/projects';
+import { APIConfigRule } from '../contracts/projects';
 import { StatsigConfig } from '../state/ProjectsState';
 import ProjectsState from '../state/ProjectsState';
 import { getTierPrefix } from './webUtils';
@@ -35,15 +35,6 @@ export function getStaleConfig(configName: string): StatsigConfig[] {
 
 export function getConfigsFromName(configName: string): StatsigConfig[] {
   return ProjectsState.instance.findConfig(configName);
-}
-
-export function getAllStaleConfigs(): StatsigConfig[] {
-  const configIndex = ProjectsState.instance.getConfigIndex();
-  const configList = Array.from(configIndex.values()).reduce(
-    (flat, e) => flat.concat(e),
-    [],
-  );
-  return configList.filter((config) => config.data.checksInPast30Days === 0);
 }
 
 export type StaticConfigResult = 'pass' | 'fail' | 'mixed';

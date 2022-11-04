@@ -43,7 +43,7 @@ export async function run(params?: {
   let projectsResponse: AxiosResponse<ProjectsContract> | undefined = undefined;
   try {
     projectsResponse = await axios.post(
-      `http://0.0.0.0:3006/developer/v1/projects`,
+      `https://${getTierPrefix()}api.statsig.com/developer/v1/projects`,
       { sinceTime: sinceTime },
       { headers: { 'statsig-api-key': token } },
     );
