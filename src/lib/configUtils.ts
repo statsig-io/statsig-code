@@ -1,5 +1,5 @@
 import * as vsc from 'vscode';
-import { APIConfigEntity, APIConfigRule } from '../contracts/projects';
+import { APIConfigRule } from '../contracts/projects';
 import { StatsigConfig } from '../state/ProjectsState';
 import ProjectsState from '../state/ProjectsState';
 import { getTierPrefix } from './webUtils';
@@ -29,10 +29,12 @@ function isPublic(rule: APIConfigRule): boolean {
 }
 
 export function getStaleConfig(configName: string): StatsigConfig[] {
-  const configs = ProjectsState.instance.findConfig(configName);
-  return configs.filter(
-    (config) => config.data.extraData.checksInPast30Days === 0,
-  );
+  const configs = getConfigsFromName(configName);
+  return configs.filter((config) => config.data.checksInPast30Days === 0);
+}
+
+export function getConfigsFromName(configName: string): StatsigConfig[] {
+  return ProjectsState.instance.findConfig(configName);
 }
 
 export type StaticConfigResult = 'pass' | 'fail' | 'mixed';
@@ -122,8 +124,8 @@ export function renderConfigInMarkdown(
     )}\n\`\`\``;
   }
 
-  if (c.data.extraData.checksInPast30Days !== undefined) {
-    body = `${body} \n\n Checks in past 30 days: ${c.data.extraData.checksInPast30Days}`;
+  if (c.data.checksInPast30Days !== undefined) {
+    body = `${body} \n\n Checks in past 30 days: ${c.data.checksInPast30Days}`;
   }
 
   return new vsc.MarkdownString(
