@@ -61,6 +61,11 @@
           "default": false,
           "description": "Whether to display CodeLens tooltips."
         },
+        "statsig.textEditor.enableDiagnostics": {
+          "type": "boolean",
+          "default": true,
+          "description": "Whether to display diagnostic info."
+        },
         "statsig.web.tier": {
           "type": "string",
           "default": "prod",

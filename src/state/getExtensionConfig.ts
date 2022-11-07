@@ -8,6 +8,7 @@ type StatsigExtensionConfiguration = {
   textEditor: {
     enableHoverTooltips: boolean;
     enableCodeLens: boolean;
+    enableDiagnostics: boolean;
   };
   web: {
     tier: 'prod' | 'latest' | 'us-east-2' | 'us-west-2' | 'ap-south-1';
