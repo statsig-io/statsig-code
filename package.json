@@ -147,6 +147,10 @@
       {
         "command": "statsig.feelingLucky",
         "title": "I'm feeling lucky"
+      },
+      {
+        "command": "statsig.cleanupStale",
+        "title": "Statsig: Cleanup stale gates/configs"
       }
     ],
     "menus": {

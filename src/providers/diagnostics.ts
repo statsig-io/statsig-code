@@ -17,7 +17,15 @@ export function refreshDiagnostics(
   diagnosticCollection: vsc.DiagnosticCollection,
 ): void {
   const diagnostics: vsc.Diagnostic[] = [];
+  findStaleConfigs(doc, diagnostics);
+  diagnosticCollection.set(doc.uri, diagnostics);
+}
 
+export function findStaleConfigs(
+  doc: vsc.TextDocument,
+  diagnostics?: vsc.Diagnostic[],
+): string[] {
+  const staleConfigs: string[] = [];
   for (let lineIndex = 0; lineIndex < doc.lineCount; lineIndex++) {
     const lineOfText = doc.lineAt(lineIndex);
     const configSearch = lineOfText.text.match(CONFIG_NAME_WITH_QUOTES_REGEX);
@@ -25,10 +33,18 @@ export function refreshDiagnostics(
       configSearch.forEach((match) => {
         const configName = match.substring(1, match.length - 1);
         if (getStaleConfig(configName).length > 0) {
-          diagnostics.push(
+          staleConfigs.push(configName);
+          const quoteOffset = match.indexOf(configName);
+          const index = lineOfText.text.indexOf(match) + quoteOffset;
+          const range = new vsc.Range(
+            lineIndex,
+            index,
+            lineIndex,
+            index + configName.length,
+          );
+          diagnostics?.push(
             createDiagnostic(DiagnosticCode.staleCheck, {
-              lineOfText,
-              lineIndex,
+              range,
               configName,
             }),
           );
@@ -36,30 +52,20 @@ export function refreshDiagnostics(
       });
     }
   }
-
-  diagnosticCollection.set(doc.uri, diagnostics);
+  return staleConfigs;
 }
 
 function createDiagnostic(
   diagnosticCode: DiagnosticCode,
   metadata: {
-    lineOfText: vsc.TextLine;
-    lineIndex: number;
+    range: vsc.Range;
     configName: string;
   },
 ): vsc.Diagnostic {
   let diagnostic: vsc.Diagnostic;
   switch (diagnosticCode) {
     case DiagnosticCode.staleCheck: {
-      const { lineOfText, lineIndex, configName } = metadata;
-      const index = lineOfText.text.indexOf(configName);
-
-      const range = new vsc.Range(
-        lineIndex,
-        index,
-        lineIndex,
-        index + configName.length,
-      );
+      const { range, configName } = metadata;
 
       diagnostic = new vsc.Diagnostic(
         range,
