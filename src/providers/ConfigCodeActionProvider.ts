@@ -1,7 +1,11 @@
+/* eslint-disable @typescript-eslint/prefer-regexp-exec */
 import * as vsc from 'vscode';
 import {
+  checkGateReplacement,
+  getConfigReplacement,
   getStatsigAPICheckGateRegex,
   getStatsigAPIGetConfigRegex,
+  getVariableAssignmentRegex,
   isLanguageSupported,
   SupportedLanguageType,
 } from '../lib/languageUtils';
@@ -73,31 +77,34 @@ export class ConfigCodeActionProvider implements vsc.CodeActionProvider {
     doc: vsc.TextDocument,
     range: vsc.Range | vsc.Selection,
   ): [vsc.WorkspaceEdit, boolean] {
-    let success = false;
     const edit = new vsc.WorkspaceEdit();
     const line = doc.lineAt(range.start.line);
+    const configName = doc.getText(range);
+    const language = doc.languageId as SupportedLanguageType;
 
-    const checkGateMatch = getStatsigAPICheckGateRegex(
-      doc.languageId as SupportedLanguageType,
-    ).exec(line.text);
+    const checkGateMatch = line.text.match(
+      getStatsigAPICheckGateRegex(language),
+    );
 
     if (checkGateMatch) {
-      checkGateMatch.forEach((match) => {
-        const matchIndex = line.text.indexOf(match);
-        const matchRange = new vsc.Range(
-          line.lineNumber,
-          matchIndex,
-          line.lineNumber,
-          matchIndex + match.length,
-        );
-        edit.delete(doc.uri, matchRange);
-        success = true;
-      });
+      for (const match of checkGateMatch) {
+        if (match.includes(configName)) {
+          const matchIndex = line.text.indexOf(match);
+          const matchRange = new vsc.Range(
+            line.lineNumber,
+            matchIndex,
+            line.lineNumber,
+            matchIndex + match.length,
+          );
+          edit.replace(doc.uri, matchRange, checkGateReplacement(language));
+          return [edit, true];
+        }
+      }
     }
 
-    const getConfigMatch = getStatsigAPIGetConfigRegex(
-      doc.languageId as SupportedLanguageType,
-    ).exec(line.text);
+    const getConfigMatch = line.text.match(
+      getStatsigAPIGetConfigRegex(language),
+    );
 
     if (getConfigMatch) {
       getConfigMatch.forEach((match) => {
@@ -108,12 +115,21 @@ export class ConfigCodeActionProvider implements vsc.CodeActionProvider {
           line.lineNumber,
           matchIndex + match.length,
         );
-        edit.delete(doc.uri, matchRange);
-        success = true;
+        edit.replace(doc.uri, matchRange, getConfigReplacement(language));
+        return [edit, true];
       });
     }
 
-    return [edit, success];
+    const variableAssignmentMatch = line.text.match(
+      getVariableAssignmentRegex(language),
+    );
+
+    if (variableAssignmentMatch) {
+      edit.delete(doc.uri, line.rangeIncludingLineBreak);
+      return [edit, true];
+    }
+
+    return [edit, false];
   }
 }
 

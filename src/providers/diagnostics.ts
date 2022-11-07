@@ -1,7 +1,7 @@
+/* eslint-disable @typescript-eslint/prefer-regexp-exec */
 import * as vsc from 'vscode';
 import { getStaleConfig } from '../lib/configUtils';
 import { CONFIG_NAME_WITH_QUOTES_REGEX } from '../lib/languageUtils';
-import { StatsigConfig } from '../state/ProjectsState';
 
 export enum DiagnosticCode {
   staleCheck = 'stale_check',
@@ -20,7 +20,7 @@ export function refreshDiagnostics(
 
   for (let lineIndex = 0; lineIndex < doc.lineCount; lineIndex++) {
     const lineOfText = doc.lineAt(lineIndex);
-    const configSearch = CONFIG_NAME_WITH_QUOTES_REGEX.exec(lineOfText.text);
+    const configSearch = lineOfText.text.match(CONFIG_NAME_WITH_QUOTES_REGEX);
     if (configSearch !== null) {
       configSearch.forEach((match) => {
         const configName = match.substring(1, match.length - 1);
