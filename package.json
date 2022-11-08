@@ -132,6 +132,16 @@
         "icon": "$(ports-open-browser-icon)"
       },
       {
+        "command": "statsig.selectMainProject",
+        "title": "Select Main Project",
+        "icon": "$(star)"
+      },
+      {
+        "command": "statsig.selectMainProjectNoop",
+        "title": "Select Main Project",
+        "icon": "$(star-full)"
+      },
+      {
         "command": "statsig.copyToClipboard",
         "title": "Copy to Clipboard",
         "icon": "$(files)"
@@ -184,6 +194,16 @@
           "command": "statsig.openTreeViewEntryInBrowser",
           "when": "viewItem == statsig_config",
           "group": "inline"
+        },
+        {
+          "command": "statsig.selectMainProject",
+          "when": "viewItem =~ /project_entry.*/",
+          "group": "inline"
+        },
+        {
+          "command": "statsig.selectMainProjectNoop",
+          "when": "viewItem in statsig.mainProject",
+          "group": "inline"
         }
       ],
       "commandPalette": [
@@ -193,6 +213,14 @@
         },
         {
           "command": "statsig.openTreeViewEntryInBrowser",
+          "when": "false"
+        },
+        {
+          "command": "statsig.selectMainProject",
+          "when": "false"
+        },
+        {
+          "command": "statsig.selectMainProjectNoop",
           "when": "false"
         }
       ]

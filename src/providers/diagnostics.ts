@@ -32,8 +32,8 @@ export function findStaleConfigs(
     if (configSearch !== null) {
       configSearch.forEach((match) => {
         const configName = match.substring(1, match.length - 1);
-        const staleCheck = getStaleConfigWithReason(configName);
-        if (getStaleConfigWithReason(configName).length > 0) {
+        const staleConfig = getStaleConfigWithReason(configName);
+        if (staleConfig) {
           staleConfigs.push(configName);
           const quoteOffset = match.indexOf(configName);
           const index = lineOfText.text.indexOf(match) + quoteOffset;
@@ -47,7 +47,7 @@ export function findStaleConfigs(
             createDiagnostic(DiagnosticCode.staleCheck, {
               range,
               configName,
-              reason: staleCheck[0].reason,
+              reason: staleConfig.reason,
             }),
           );
         }
@@ -87,6 +87,7 @@ function createDiagnostic(
 export function subscribeToDocumentChanges(
   context: vsc.ExtensionContext,
   diagnosticCollection: vsc.DiagnosticCollection,
+  additionalListeners: vsc.Event<unknown>[] = [],
 ): void {
   if (vsc.window.activeTextEditor) {
     refreshDiagnostics(
@@ -113,4 +114,17 @@ export function subscribeToDocumentChanges(
       diagnosticCollection.delete(doc.uri),
     ),
   );
+
+  additionalListeners.forEach((listener) => {
+    context.subscriptions.push(
+      listener(() => {
+        if (vsc.window.activeTextEditor) {
+          refreshDiagnostics(
+            vsc.window.activeTextEditor.document,
+            diagnosticCollection,
+          );
+        }
+      }),
+    );
+  });
 }

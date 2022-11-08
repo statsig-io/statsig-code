@@ -21,25 +21,26 @@ export default class ConfigHoverProvider implements vsc.HoverProvider {
 
     const name = token.substring(1, token.length - 1);
     const maybeOutdatedConfigs = ProjectsState.instance.findConfig(name);
-    if (maybeOutdatedConfigs.length === 0) {
-      return null;
-    }
 
     return (async () => {
-      await fetchConfigs.run({
-        throttle: true,
-        silent: true,
-        incremental: true,
-      });
+      let configs = maybeOutdatedConfigs;
+      if (maybeOutdatedConfigs.length === 0) {
+        await fetchConfigs.run({
+          throttle: true,
+          silent: true,
+          incremental: true,
+        });
 
-      const updatedConfigs = ProjectsState.instance.findConfig(name);
-      if (updatedConfigs.length === 0) {
-        return null;
+        const updatedConfigs = ProjectsState.instance.findConfig(name);
+        if (updatedConfigs.length === 0) {
+          return null;
+        }
+        configs = updatedConfigs;
       }
 
       return {
-        contents: updatedConfigs.map((c) =>
-          renderConfigInMarkdown(c, updatedConfigs.length > 1),
+        contents: configs.map((c) =>
+          renderConfigInMarkdown(c, configs.length > 1),
         ),
       };
     })();

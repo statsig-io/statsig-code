@@ -28,24 +28,23 @@ function isPublic(rule: APIConfigRule): boolean {
   return rule.conditions[0].type === 'public';
 }
 
-export function getStaleConfigWithReason(
-  configName: string,
-): { reason: string; config: StatsigConfig }[] {
-  const configs = getConfigsFromName(configName);
-  const configsWithReason = configs.map((config) => {
-    if (config.data.checksInPast30Days === 0) {
-      return { reason: '0 checks in the past 30 days', config };
-    }
-    if (!config.data.enabled) {
-      return { reason: 'is disabled', config };
-    }
-    return { reason: '', config };
-  });
-  return configsWithReason.filter((e) => e.reason !== '');
-}
-
-export function getConfigsFromName(configName: string): StatsigConfig[] {
-  return ProjectsState.instance.findConfig(configName);
+export function getStaleConfigWithReason(configName: string): {
+  reason: string;
+  config: StatsigConfig;
+} | null {
+  const mainProject = ProjectsState.instance.getMainProject();
+  const configs = ProjectsState.instance.findConfig(configName, mainProject);
+  if (configs.length === 0) {
+    return null;
+  }
+  const config = configs[0];
+  if (config.data.checksInPast30Days === 0) {
+    return { reason: '0 checks in the past 30 days', config };
+  }
+  if (!config.data.enabled) {
+    return { reason: 'is disabled', config };
+  }
+  return null;
 }
 
 export type StaticConfigResult = 'pass' | 'fail' | 'mixed';

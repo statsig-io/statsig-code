@@ -8,10 +8,14 @@ import {
 import { getStaticResult } from '../../lib/configUtils';
 import { StatsigConfig } from '../../state/ProjectsState';
 import { APIConfigEntry } from './APIConfigEntry';
+import { ConfigGroupEntry } from './ConfigGroupEntry';
 
 export class GateEntry extends APIConfigEntry {
-  constructor(public readonly data: StatsigConfig) {
-    super(data);
+  constructor(
+    public readonly data: StatsigConfig,
+    readonly parent: ConfigGroupEntry,
+  ) {
+    super(data, parent);
     if (!data.data.enabled) {
       this.iconPath = CONFIG_DISABLED_ICON;
     } else {

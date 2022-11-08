@@ -3,6 +3,7 @@ import * as openConsole from './commands/openConsole';
 import * as signIn from './commands/signIn';
 import * as signOut from './commands/signOut';
 import * as copyToClipboard from './commands/copyToClipboard';
+import * as selectMainProject from './commands/selectMainProject';
 import * as feelingLucky from './commands/feelingLucky';
 import * as fetchConfigs from './commands/fetchConfigs';
 import * as openConfigInConsole from './commands/openConfigInConsole';
@@ -19,6 +20,7 @@ import {
   registerCommands,
   ConfigCodeActionProvider,
 } from './providers/ConfigCodeActionProvider';
+import { Entry } from './providers/entries/Entry';
 
 export function activate(context: vsc.ExtensionContext): void {
   const config = getExtensionConfig();
@@ -26,6 +28,17 @@ export function activate(context: vsc.ExtensionContext): void {
   const statsigProjectsView = vsc.window.createTreeView('statsig.projects', {
     treeDataProvider: projectsProvider,
   });
+  const setTreeViewFocus = async (entry: Entry) => {
+    // await statsigProjectsView.reveal(entry, {
+    //   select: true,
+    //   focus: true,
+    //   expand: true,
+    // });
+    await vsc.commands.executeCommand('setContext', 'statsig.mainProject', [
+      `Kenny's Test Project`,
+    ]);
+    projectsProvider.refresh();
+  };
 
   const codeLensProvider = config.textEditor.enableCodeLens
     ? new ConfigCodeLensProvider()
@@ -58,6 +71,7 @@ export function activate(context: vsc.ExtensionContext): void {
     signOut.register(),
     fetchConfigs.register(),
     copyToClipboard.register(),
+    selectMainProject.register(setTreeViewFocus),
     feelingLucky.register(),
     vsc.window.registerUriHandler(new UriHandler()),
     vsc.window.registerTreeDataProvider('statsig.projects', projectsProvider),
@@ -70,7 +84,9 @@ export function activate(context: vsc.ExtensionContext): void {
       'statsig.stale-config',
     );
     context.subscriptions.push(staleConfigDiagnostic);
-    subscribeToDocumentChanges(context, staleConfigDiagnostic);
+    subscribeToDocumentChanges(context, staleConfigDiagnostic, [
+      projectsProvider.getOnDidChangeTreeData(),
+    ]);
   }
 
   if (config.textEditor.enableHoverTooltips) {
