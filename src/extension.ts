@@ -46,6 +46,10 @@ export function activate(context: vsc.ExtensionContext): void {
   AuthState.init(context, refreshViews);
   ProjectsState.init(context, refreshViews);
 
+  const staleConfigDiagnostic = vsc.languages.createDiagnosticCollection(
+    'statsig.stale-config',
+  );
+
   context.subscriptions.push(
     openTreeViewEntryInBrowser.register(),
     openConfigInConsole.register(),
@@ -58,6 +62,7 @@ export function activate(context: vsc.ExtensionContext): void {
     vsc.window.registerUriHandler(new UriHandler()),
     vsc.window.registerTreeDataProvider('statsig.projects', projectsProvider),
     statsigProjectsView,
+    staleConfigDiagnostic,
   );
 
   if (config.textEditor.enableDiagnostics) {
