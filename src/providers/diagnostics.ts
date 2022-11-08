@@ -30,6 +30,7 @@ export function refreshDiagnostics(
               lineOfText,
               lineIndex,
               config,
+              reason: '0 checks in the past 30 days',
             }),
           );
         });
@@ -46,12 +47,13 @@ function createDiagnostic(
     lineOfText: vsc.TextLine;
     lineIndex: number;
     config: StatsigConfig;
+    reason?: string;
   },
 ): vsc.Diagnostic {
   let diagnostic: vsc.Diagnostic;
   switch (diagnosticCode) {
     case DiagnosticCode.staleCheck: {
-      const { lineOfText, lineIndex, config } = metadata;
+      const { lineOfText, lineIndex, config, reason } = metadata;
       const configName = config.data.name;
       const index = lineOfText.text.indexOf(configName);
 
@@ -64,7 +66,9 @@ function createDiagnostic(
 
       diagnostic = new vsc.Diagnostic(
         range,
-        `${configName} may be stale. Consider removing from code`,
+        `${configName} may be stale. Consider removing from code ${
+          reason ? `\n(${reason})` : ''
+        }`,
         vsc.DiagnosticSeverity.Information,
       );
       diagnostic.code = DiagnosticCode.staleCheck;
