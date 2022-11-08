@@ -46,6 +46,7 @@ export function findStaleConfigs(
             createDiagnostic(DiagnosticCode.staleCheck, {
               range,
               configName,
+              reason: '0 checks in the past 30 days',
             }),
           );
         }
@@ -60,16 +61,19 @@ function createDiagnostic(
   metadata: {
     range: vsc.Range;
     configName: string;
+    reason?: string;
   },
 ): vsc.Diagnostic {
   let diagnostic: vsc.Diagnostic;
   switch (diagnosticCode) {
     case DiagnosticCode.staleCheck: {
-      const { range, configName } = metadata;
+      const { range, configName, reason } = metadata;
 
       diagnostic = new vsc.Diagnostic(
         range,
-        `${configName} may be stale. Consider removing from code`,
+        `${configName} may be stale. Consider removing from code ${
+          reason ? `\n(${reason})` : ''
+        }`,
         vsc.DiagnosticSeverity.Information,
       );
       diagnostic.code = DiagnosticCode.staleCheck;
