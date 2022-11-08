@@ -37,6 +37,20 @@ export function getStatsigAPIGetConfigRegex(
   }
 }
 
+export function getStatsigAPIGetExperimentRegex(
+  language: SupportedLanguageType,
+  configName: string,
+): RegExp {
+  switch (language) {
+    case 'javascript':
+    case 'typescript':
+      return new RegExp(
+        `[a-zA-Z0-9_]+[.]getExperiment\\([^)]*["'\`]${configName}["'\`][^)]*\\)`,
+        'g',
+      );
+  }
+}
+
 export function getVariableAssignmentRegex(
   language: SupportedLanguageType,
   configName: string,
@@ -57,6 +71,16 @@ export function checkGateReplacement(language: SupportedLanguageType): string {
 }
 
 export function getConfigReplacement(language: SupportedLanguageType): string {
+  switch (language) {
+    case 'javascript':
+    case 'typescript':
+      return '{}';
+  }
+}
+
+export function getExperimentReplacement(
+  language: SupportedLanguageType,
+): string {
   switch (language) {
     case 'javascript':
     case 'typescript':

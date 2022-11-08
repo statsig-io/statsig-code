@@ -3,8 +3,10 @@ import * as vsc from 'vscode';
 import {
   checkGateReplacement,
   getConfigReplacement,
+  getExperimentReplacement,
   getStatsigAPICheckGateRegex,
   getStatsigAPIGetConfigRegex,
+  getStatsigAPIGetExperimentRegex,
   getVariableAssignmentRegex,
   isLanguageSupported,
   nthIndexOf,
@@ -100,12 +102,14 @@ export class ConfigCodeActionProvider implements vsc.CodeActionProvider {
 
     const uniqueConfigs = new Set(configs);
     uniqueConfigs.forEach((config) => {
-      const checkGateMatch = searchableText.match(
-        getStatsigAPICheckGateRegex(language, config),
-      );
-
-      if (checkGateMatch) {
-        for (const match of checkGateMatch) {
+      const addReplacementEdit = (
+        matches: RegExpMatchArray | null,
+        replacement: string,
+      ): void => {
+        if (!matches) {
+          return;
+        }
+        for (const match of matches) {
           seen[match] ? ++seen[match] : (seen[match] = 1);
           const matchIndex =
             nthIndexOf(searchableText, match, seen[match]) + offset;
@@ -113,28 +117,28 @@ export class ConfigCodeActionProvider implements vsc.CodeActionProvider {
             doc.positionAt(matchIndex),
             doc.positionAt(matchIndex + match.length),
           );
-          edit.replace(doc.uri, matchRange, checkGateReplacement(language));
+          edit.replace(doc.uri, matchRange, replacement);
           changesMade = true;
         }
-      }
+      };
+      const checkGateMatch = searchableText.match(
+        getStatsigAPICheckGateRegex(language, config),
+      );
+      addReplacementEdit(checkGateMatch, checkGateReplacement(language));
 
       const getConfigMatch = searchableText.match(
         getStatsigAPIGetConfigRegex(language, config),
       );
+      addReplacementEdit(getConfigMatch, getConfigReplacement(language));
 
-      if (getConfigMatch) {
-        for (const match of getConfigMatch) {
-          seen[match] ? ++seen[match] : (seen[match] = 1);
-          const matchIndex =
-            nthIndexOf(searchableText, match, seen[match]) + offset;
-          const matchRange = new vsc.Range(
-            doc.positionAt(matchIndex),
-            doc.positionAt(matchIndex + match.length),
-          );
-          edit.replace(doc.uri, matchRange, getConfigReplacement(language));
-          changesMade = true;
-        }
-      }
+      const getExperimentMatch = searchableText.match(
+        getStatsigAPIGetExperimentRegex(language, config),
+      );
+      addReplacementEdit(
+        getExperimentMatch,
+        getExperimentReplacement(language),
+      );
+
       const variableAssignmentMatch = searchableText.match(
         getVariableAssignmentRegex(language, config),
       );
