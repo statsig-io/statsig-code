@@ -61,6 +61,11 @@
           "default": false,
           "description": "Whether to display CodeLens tooltips."
         },
+        "statsig.textEditor.enableDiagnostics": {
+          "type": "boolean",
+          "default": true,
+          "description": "Whether to display diagnostic info."
+        },
         "statsig.web.tier": {
           "type": "string",
           "default": "prod",
@@ -142,6 +147,10 @@
       {
         "command": "statsig.feelingLucky",
         "title": "I'm feeling lucky"
+      },
+      {
+        "command": "statsig.cleanupStale",
+        "title": "Statsig: Cleanup stale gates/configs"
       }
     ],
     "menus": {

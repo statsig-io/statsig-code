@@ -1,7 +1,7 @@
+/* eslint-disable @typescript-eslint/prefer-regexp-exec */
 import * as vsc from 'vscode';
 import { getStaleConfig } from '../lib/configUtils';
 import { CONFIG_NAME_WITH_QUOTES_REGEX } from '../lib/languageUtils';
-import { StatsigConfig } from '../state/ProjectsState';
 
 export enum DiagnosticCode {
   staleCheck = 'stale_check',
@@ -17,52 +17,57 @@ export function refreshDiagnostics(
   diagnosticCollection: vsc.DiagnosticCollection,
 ): void {
   const diagnostics: vsc.Diagnostic[] = [];
+  findStaleConfigs(doc, diagnostics);
+  diagnosticCollection.set(doc.uri, diagnostics);
+}
 
+export function findStaleConfigs(
+  doc: vsc.TextDocument,
+  diagnostics?: vsc.Diagnostic[],
+): string[] {
+  const staleConfigs: string[] = [];
   for (let lineIndex = 0; lineIndex < doc.lineCount; lineIndex++) {
     const lineOfText = doc.lineAt(lineIndex);
-    const configSearch = CONFIG_NAME_WITH_QUOTES_REGEX.exec(lineOfText.text);
+    const configSearch = lineOfText.text.match(CONFIG_NAME_WITH_QUOTES_REGEX);
     if (configSearch !== null) {
       configSearch.forEach((match) => {
         const configName = match.substring(1, match.length - 1);
-        getStaleConfig(configName).forEach((config) => {
-          diagnostics.push(
+        if (getStaleConfig(configName).length > 0) {
+          staleConfigs.push(configName);
+          const quoteOffset = match.indexOf(configName);
+          const index = lineOfText.text.indexOf(match) + quoteOffset;
+          const range = new vsc.Range(
+            lineIndex,
+            index,
+            lineIndex,
+            index + configName.length,
+          );
+          diagnostics?.push(
             createDiagnostic(DiagnosticCode.staleCheck, {
-              lineOfText,
-              lineIndex,
-              config,
+              range,
+              configName,
               reason: '0 checks in the past 30 days',
             }),
           );
-        });
+        }
       });
     }
   }
-
-  diagnosticCollection.set(doc.uri, diagnostics);
+  return staleConfigs;
 }
 
 function createDiagnostic(
   diagnosticCode: DiagnosticCode,
   metadata: {
-    lineOfText: vsc.TextLine;
-    lineIndex: number;
-    config: StatsigConfig;
+    range: vsc.Range;
+    configName: string;
     reason?: string;
   },
 ): vsc.Diagnostic {
   let diagnostic: vsc.Diagnostic;
   switch (diagnosticCode) {
     case DiagnosticCode.staleCheck: {
-      const { lineOfText, lineIndex, config, reason } = metadata;
-      const configName = config.data.name;
-      const index = lineOfText.text.indexOf(configName);
-
-      const range = new vsc.Range(
-        lineIndex,
-        index,
-        lineIndex,
-        index + configName.length,
-      );
+      const { range, configName, reason } = metadata;
 
       diagnostic = new vsc.Diagnostic(
         range,
@@ -72,6 +77,7 @@ function createDiagnostic(
         vsc.DiagnosticSeverity.Information,
       );
       diagnostic.code = DiagnosticCode.staleCheck;
+      diagnostic.source = configName;
     }
   }
   return diagnostic;
