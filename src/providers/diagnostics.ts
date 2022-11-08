@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/prefer-regexp-exec */
 import * as vsc from 'vscode';
-import { getStaleConfig } from '../lib/configUtils';
+import { getStaleConfigWithReason } from '../lib/configUtils';
 import { CONFIG_NAME_WITH_QUOTES_REGEX } from '../lib/languageUtils';
 
 export enum DiagnosticCode {
@@ -32,7 +32,8 @@ export function findStaleConfigs(
     if (configSearch !== null) {
       configSearch.forEach((match) => {
         const configName = match.substring(1, match.length - 1);
-        if (getStaleConfig(configName).length > 0) {
+        const staleCheck = getStaleConfigWithReason(configName);
+        if (getStaleConfigWithReason(configName).length > 0) {
           staleConfigs.push(configName);
           const quoteOffset = match.indexOf(configName);
           const index = lineOfText.text.indexOf(match) + quoteOffset;
@@ -46,7 +47,7 @@ export function findStaleConfigs(
             createDiagnostic(DiagnosticCode.staleCheck, {
               range,
               configName,
-              reason: '0 checks in the past 30 days',
+              reason: staleCheck[0].reason,
             }),
           );
         }
