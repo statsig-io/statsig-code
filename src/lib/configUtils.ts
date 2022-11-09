@@ -28,10 +28,15 @@ function isPublic(rule: APIConfigRule): boolean {
   return rule.conditions[0].type === 'public';
 }
 
-export function getStaleConfigWithReason(configName: string): {
-  reason: string;
+export type StaleConfig = {
   config: StatsigConfig;
-} | null {
+  reason: string;
+  gateReplacement?: unknown;
+  configReplacement?: unknown;
+};
+export function getStaleConfigWithReason(
+  configName: string,
+): StaleConfig | null {
   const mainProject = ProjectsState.instance.getMainProject();
   const configs = ProjectsState.instance.findConfig(configName, mainProject);
   if (configs.length === 0) {
@@ -39,10 +44,20 @@ export function getStaleConfigWithReason(configName: string): {
   }
   const config = configs[0];
   if (config.data.checksInPast30Days === 0) {
-    return { reason: '0 checks in the past 30 days', config };
+    return {
+      config,
+      reason: '0 checks in the past 30 days',
+      gateReplacement: config.data.defaultValue,
+      configReplacement: {},
+    };
   }
   if (!config.data.enabled) {
-    return { reason: 'is disabled', config };
+    return {
+      config,
+      reason: 'is disabled',
+      gateReplacement: config.data.defaultValue,
+      configReplacement: {},
+    };
   }
   return null;
 }

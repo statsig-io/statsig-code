@@ -62,29 +62,36 @@ export function getVariableAssignmentRegex(
   }
 }
 
-export function checkGateReplacement(language: SupportedLanguageType): string {
+export function checkGateReplacement(
+  language: SupportedLanguageType,
+  value?: unknown,
+): string {
   switch (language) {
     case 'javascript':
     case 'typescript':
-      return 'false';
+      return String(value) ?? 'false';
   }
 }
 
-export function getConfigReplacement(language: SupportedLanguageType): string {
+export function getConfigReplacement(
+  language: SupportedLanguageType,
+  value?: unknown,
+): string {
   switch (language) {
     case 'javascript':
     case 'typescript':
-      return '{}';
+      return String(value) ?? '{}';
   }
 }
 
 export function getExperimentReplacement(
   language: SupportedLanguageType,
+  value?: unknown,
 ): string {
   switch (language) {
     case 'javascript':
     case 'typescript':
-      return '{}';
+      return String(value) ?? '{}';
   }
 }
 

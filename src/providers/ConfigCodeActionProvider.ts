@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/prefer-regexp-exec */
 import * as vsc from 'vscode';
+import { getStaleConfigWithReason } from '../lib/configUtils';
 import {
   checkGateReplacement,
   getConfigReplacement,
@@ -13,6 +14,7 @@ import {
   SupportedLanguageType,
   SUPPORTED_FILE_EXTENSIONS,
 } from '../lib/languageUtils';
+import { ConfigType } from '../state/ProjectsState';
 import { DiagnosticCode, findStaleConfigs } from './diagnostics';
 
 type CodeActionType = {
@@ -83,6 +85,19 @@ export class ConfigCodeActionProvider implements vsc.CodeActionProvider {
     return action;
   }
 
+  private static getReplacementValue(configName: string): unknown {
+    const staleConfig = getStaleConfigWithReason(configName);
+    if (staleConfig) {
+      switch (staleConfig.config.type) {
+        case 'dynamic_config':
+          return staleConfig.configReplacement;
+        case 'feature_gate':
+          return staleConfig.gateReplacement;
+      }
+    }
+    return null;
+  }
+
   public static handleEdit(
     doc: vsc.TextDocument,
     edit: vsc.WorkspaceEdit,
@@ -124,19 +139,34 @@ export class ConfigCodeActionProvider implements vsc.CodeActionProvider {
       const checkGateMatch = searchableText.match(
         getStatsigAPICheckGateRegex(language, config),
       );
-      addReplacementEdit(checkGateMatch, checkGateReplacement(language));
+      addReplacementEdit(
+        checkGateMatch,
+        checkGateReplacement(language, this.getReplacementValue(config)),
+      );
 
       const getConfigMatch = searchableText.match(
         getStatsigAPIGetConfigRegex(language, config),
       );
-      addReplacementEdit(getConfigMatch, getConfigReplacement(language));
+      addReplacementEdit(
+        getConfigMatch,
+        getConfigReplacement(
+          language,
+          checkGateReplacement(language, this.getReplacementValue(config)),
+        ),
+      );
 
       const getExperimentMatch = searchableText.match(
         getStatsigAPIGetExperimentRegex(language, config),
       );
       addReplacementEdit(
         getExperimentMatch,
-        getExperimentReplacement(language),
+        getExperimentReplacement(
+          language,
+          getConfigReplacement(
+            language,
+            checkGateReplacement(language, this.getReplacementValue(config)),
+          ),
+        ),
       );
 
       const variableAssignmentMatch = searchableText.match(
