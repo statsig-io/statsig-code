@@ -13,7 +13,6 @@ export abstract class APIConfigEntry extends Entry {
   }
 
   getParent(): Thenable<ConfigGroupEntry | null> {
-    console.log('APIConfigEntry getParent');
     return Promise.resolve(this.parent);
   }
 

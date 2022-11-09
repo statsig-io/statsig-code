@@ -64,7 +64,7 @@ export function getVariableAssignmentRegex(
 
 export function checkGateReplacement(
   language: SupportedLanguageType,
-  value?: unknown,
+  value?: boolean,
 ): string {
   switch (language) {
     case 'javascript':
@@ -75,7 +75,7 @@ export function checkGateReplacement(
 
 export function getConfigReplacement(
   language: SupportedLanguageType,
-  value?: unknown,
+  value?: Record<string, unknown>,
 ): string {
   switch (language) {
     case 'javascript':
@@ -86,7 +86,7 @@ export function getConfigReplacement(
 
 export function getExperimentReplacement(
   language: SupportedLanguageType,
-  value?: unknown,
+  value?: Record<string, unknown>,
 ): string {
   switch (language) {
     case 'javascript':

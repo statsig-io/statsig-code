@@ -46,5 +46,6 @@ export class ProjectEntry extends Entry {
       ),
     ]);
   }
+
   contextValue = 'project_entry';
 }

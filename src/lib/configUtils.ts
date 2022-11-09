@@ -1,7 +1,6 @@
 import * as vsc from 'vscode';
 import { APIConfigRule } from '../contracts/projects';
-import { StatsigConfig } from '../state/ProjectsState';
-import ProjectsState from '../state/ProjectsState';
+import ProjectsState, { StatsigConfig } from '../state/ProjectsState';
 import { getTierPrefix } from './webUtils';
 
 export function getConfigUrl(c: StatsigConfig): vsc.Uri {
@@ -28,12 +27,12 @@ function isPublic(rule: APIConfigRule): boolean {
   return rule.conditions[0].type === 'public';
 }
 
-export type StaleConfig = {
+export interface StaleConfig {
   config: StatsigConfig;
   reason: string;
-  gateReplacement?: unknown;
-  configReplacement?: unknown;
-};
+  gateReplacement: boolean | null;
+  configReplacement: Record<string, unknown> | null;
+}
 export function getStaleConfigWithReason(
   configName: string,
 ): StaleConfig | null {
@@ -47,7 +46,10 @@ export function getStaleConfigWithReason(
     return {
       config,
       reason: '0 checks in the past 30 days',
-      gateReplacement: config.data.defaultValue,
+      gateReplacement:
+        config.type === 'feature_gate'
+          ? (config.data.defaultValue as boolean)
+          : null,
       configReplacement: {},
     };
   }
@@ -55,7 +57,10 @@ export function getStaleConfigWithReason(
     return {
       config,
       reason: 'is disabled',
-      gateReplacement: config.data.defaultValue,
+      gateReplacement:
+        config.type === 'feature_gate'
+          ? (config.data.defaultValue as boolean)
+          : null,
       configReplacement: {},
     };
   }

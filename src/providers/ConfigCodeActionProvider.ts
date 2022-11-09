@@ -14,7 +14,6 @@ import {
   SupportedLanguageType,
   SUPPORTED_FILE_EXTENSIONS,
 } from '../lib/languageUtils';
-import { ConfigType } from '../state/ProjectsState';
 import { DiagnosticCode, findStaleConfigs } from './diagnostics';
 
 type CodeActionType = {
@@ -85,7 +84,9 @@ export class ConfigCodeActionProvider implements vsc.CodeActionProvider {
     return action;
   }
 
-  private static getReplacementValue(configName: string): unknown {
+  private static getReplacementValue(
+    configName: string,
+  ): boolean | Record<string, unknown> | null {
     const staleConfig = getStaleConfigWithReason(configName);
     if (staleConfig) {
       switch (staleConfig.config.type) {
@@ -141,7 +142,10 @@ export class ConfigCodeActionProvider implements vsc.CodeActionProvider {
       );
       addReplacementEdit(
         checkGateMatch,
-        checkGateReplacement(language, this.getReplacementValue(config)),
+        checkGateReplacement(
+          language,
+          this.getReplacementValue(config) as boolean,
+        ),
       );
 
       const getConfigMatch = searchableText.match(
@@ -151,7 +155,7 @@ export class ConfigCodeActionProvider implements vsc.CodeActionProvider {
         getConfigMatch,
         getConfigReplacement(
           language,
-          checkGateReplacement(language, this.getReplacementValue(config)),
+          this.getReplacementValue(config) as Record<string, unknown>,
         ),
       );
 
@@ -162,10 +166,7 @@ export class ConfigCodeActionProvider implements vsc.CodeActionProvider {
         getExperimentMatch,
         getExperimentReplacement(
           language,
-          getConfigReplacement(
-            language,
-            checkGateReplacement(language, this.getReplacementValue(config)),
-          ),
+          this.getReplacementValue(config) as Record<string, unknown>,
         ),
       );
 
@@ -239,7 +240,7 @@ const removeAllStaleConfgsCommandHandler = async () => {
       }`,
     );
   } else {
-    await vsc.window.showInformationMessage(`Something went wrong`);
+    await vsc.window.showInformationMessage('Something went wrong');
   }
 };
 

@@ -19,7 +19,6 @@ export class ConfigGroupEntry extends Entry {
   }
 
   getParent(): Thenable<ProjectEntry | null> {
-    console.log('ConfigGroupEntry getParent');
     return Promise.resolve(this.parent);
   }
 
