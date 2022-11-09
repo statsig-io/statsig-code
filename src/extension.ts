@@ -20,7 +20,6 @@ import {
   registerCommands,
   ConfigCodeActionProvider,
 } from './providers/ConfigCodeActionProvider';
-import { Entry } from './providers/entries/Entry';
 
 export function activate(context: vsc.ExtensionContext): void {
   const config = getExtensionConfig();
@@ -28,17 +27,6 @@ export function activate(context: vsc.ExtensionContext): void {
   const statsigProjectsView = vsc.window.createTreeView('statsig.projects', {
     treeDataProvider: projectsProvider,
   });
-  const setTreeViewFocus = async (entry: Entry) => {
-    // await statsigProjectsView.reveal(entry, {
-    //   select: true,
-    //   focus: true,
-    //   expand: true,
-    // });
-    await vsc.commands.executeCommand('setContext', 'statsig.mainProject', [
-      `Kenny's Test Project`,
-    ]);
-    projectsProvider.refresh();
-  };
 
   const codeLensProvider = config.textEditor.enableCodeLens
     ? new ConfigCodeLensProvider()
@@ -71,7 +59,7 @@ export function activate(context: vsc.ExtensionContext): void {
     signOut.register(),
     fetchConfigs.register(),
     copyToClipboard.register(),
-    selectMainProject.register(setTreeViewFocus),
+    selectMainProject.register(),
     feelingLucky.register(),
     vsc.window.registerUriHandler(new UriHandler()),
     vsc.window.registerTreeDataProvider('statsig.projects', projectsProvider),
