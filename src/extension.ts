@@ -3,6 +3,7 @@ import * as openConsole from './commands/openConsole';
 import * as signIn from './commands/signIn';
 import * as signOut from './commands/signOut';
 import * as copyToClipboard from './commands/copyToClipboard';
+import * as selectMainProject from './commands/selectMainProject';
 import * as feelingLucky from './commands/feelingLucky';
 import * as fetchConfigs from './commands/fetchConfigs';
 import * as openConfigInConsole from './commands/openConfigInConsole';
@@ -58,6 +59,7 @@ export function activate(context: vsc.ExtensionContext): void {
     signOut.register(),
     fetchConfigs.register(),
     copyToClipboard.register(),
+    selectMainProject.register(),
     feelingLucky.register(),
     vsc.window.registerUriHandler(new UriHandler()),
     vsc.window.registerTreeDataProvider('statsig.projects', projectsProvider),
@@ -70,7 +72,9 @@ export function activate(context: vsc.ExtensionContext): void {
       'statsig.stale-config',
     );
     context.subscriptions.push(staleConfigDiagnostic);
-    subscribeToDocumentChanges(context, staleConfigDiagnostic);
+    subscribeToDocumentChanges(context, staleConfigDiagnostic, [
+      projectsProvider.getOnDidChangeTreeData(),
+    ]);
   }
 
   if (config.textEditor.enableHoverTooltips) {

@@ -5,11 +5,15 @@ import { ConfigGroupEntry } from './ConfigGroupEntry';
 
 export class ProjectEntry extends Entry {
   constructor(
-    public readonly label: string,
+    public readonly label: string | vsc.TreeItemLabel,
     readonly collapsibleState: vsc.TreeItemCollapsibleState,
     public readonly data: DeveloperProject,
   ) {
     super(label, collapsibleState, data);
+  }
+
+  getParent(): Thenable<Entry | null> {
+    return Promise.resolve(null);
   }
 
   getChildren(): Thenable<Entry[]> {
@@ -25,6 +29,7 @@ export class ProjectEntry extends Entry {
             data: c,
           };
         }),
+        this,
       ),
       new ConfigGroupEntry(
         'Dynamic Configs',
@@ -37,7 +42,10 @@ export class ProjectEntry extends Entry {
             data: c,
           };
         }),
+        this,
       ),
     ]);
   }
+
+  contextValue = 'project_entry';
 }

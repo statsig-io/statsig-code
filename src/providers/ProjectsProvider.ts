@@ -19,6 +19,10 @@ export default class ProjectsProvider implements vsc.TreeDataProvider<Entry> {
     this._onDidChangeTreeData.fire();
   }
 
+  getOnDidChangeTreeData(): vsc.Event<Entry | undefined | null | void> {
+    return this.onDidChangeTreeData;
+  }
+
   getTreeItem(element: Entry): vsc.TreeItem | Thenable<vsc.TreeItem> {
     return element;
   }
@@ -29,6 +33,10 @@ export default class ProjectsProvider implements vsc.TreeDataProvider<Entry> {
     }
 
     return Promise.resolve(element.getChildren());
+  }
+
+  getParent(element: Entry): Thenable<Entry | null> {
+    return element.getParent();
   }
 
   getRootChildren(): Thenable<Entry[]> {
@@ -45,11 +53,18 @@ export default class ProjectsProvider implements vsc.TreeDataProvider<Entry> {
         new ErrorEntry('You are not a member of any projects!'),
       ]);
     }
+    const mainProject = ProjectsState.instance.getMainProject();
 
     return Promise.resolve(
       projects.map(
         (p) =>
-          new ProjectEntry(p.name, vsc.TreeItemCollapsibleState.Expanded, p),
+          new ProjectEntry(
+            p.name === mainProject
+              ? { label: p.name, highlights: [[0, p.name.length]] }
+              : p.name,
+            vsc.TreeItemCollapsibleState.Expanded,
+            p,
+          ),
       ),
     );
   }

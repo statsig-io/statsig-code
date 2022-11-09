@@ -1,7 +1,6 @@
 import * as vsc from 'vscode';
 import { APIConfigRule } from '../contracts/projects';
-import { StatsigConfig } from '../state/ProjectsState';
-import ProjectsState from '../state/ProjectsState';
+import ProjectsState, { StatsigConfig } from '../state/ProjectsState';
 import { getTierPrefix } from './webUtils';
 
 export function getConfigUrl(c: StatsigConfig): vsc.Uri {
@@ -28,13 +27,44 @@ function isPublic(rule: APIConfigRule): boolean {
   return rule.conditions[0].type === 'public';
 }
 
-export function getStaleConfig(configName: string): StatsigConfig[] {
-  const configs = getConfigsFromName(configName);
-  return configs.filter((config) => config.data.checksInPast30Days === 0);
+export interface StaleConfig {
+  config: StatsigConfig;
+  reason: string;
+  gateReplacement: boolean | null;
+  configReplacement: Record<string, unknown> | null;
 }
-
-export function getConfigsFromName(configName: string): StatsigConfig[] {
-  return ProjectsState.instance.findConfig(configName);
+export function getStaleConfigWithReason(
+  configName: string,
+): StaleConfig | null {
+  const mainProject = ProjectsState.instance.getMainProject();
+  const configs = ProjectsState.instance.findConfig(configName, mainProject);
+  if (configs.length === 0) {
+    return null;
+  }
+  const config = configs[0];
+  if (config.data.checksInPast30Days === 0) {
+    return {
+      config,
+      reason: '0 checks in the past 30 days',
+      gateReplacement:
+        config.type === 'feature_gate'
+          ? (config.data.defaultValue as boolean)
+          : null,
+      configReplacement: {},
+    };
+  }
+  if (!config.data.enabled) {
+    return {
+      config,
+      reason: 'is disabled',
+      gateReplacement:
+        config.type === 'feature_gate'
+          ? (config.data.defaultValue as boolean)
+          : null,
+      configReplacement: {},
+    };
+  }
+  return null;
 }
 
 export type StaticConfigResult = 'pass' | 'fail' | 'mixed';

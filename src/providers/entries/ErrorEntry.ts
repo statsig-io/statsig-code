@@ -8,6 +8,10 @@ export class ErrorEntry extends Entry {
     super(label, vsc.TreeItemCollapsibleState.None, {});
   }
 
+  getParent(): Thenable<Entry | null> {
+    return Promise.resolve(null);
+  }
+
   getChildren(): Thenable<Entry[]> {
     return Promise.resolve([]);
   }

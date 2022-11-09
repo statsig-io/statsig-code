@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/prefer-regexp-exec */
 import * as vsc from 'vscode';
+import { getStaleConfigWithReason } from '../lib/configUtils';
 import {
   checkGateReplacement,
   getConfigReplacement,
@@ -83,6 +84,21 @@ export class ConfigCodeActionProvider implements vsc.CodeActionProvider {
     return action;
   }
 
+  private static getReplacementValue(
+    configName: string,
+  ): boolean | Record<string, unknown> | null {
+    const staleConfig = getStaleConfigWithReason(configName);
+    if (staleConfig) {
+      switch (staleConfig.config.type) {
+        case 'dynamic_config':
+          return staleConfig.configReplacement;
+        case 'feature_gate':
+          return staleConfig.gateReplacement;
+      }
+    }
+    return null;
+  }
+
   public static handleEdit(
     doc: vsc.TextDocument,
     edit: vsc.WorkspaceEdit,
@@ -124,19 +140,34 @@ export class ConfigCodeActionProvider implements vsc.CodeActionProvider {
       const checkGateMatch = searchableText.match(
         getStatsigAPICheckGateRegex(language, config),
       );
-      addReplacementEdit(checkGateMatch, checkGateReplacement(language));
+      addReplacementEdit(
+        checkGateMatch,
+        checkGateReplacement(
+          language,
+          this.getReplacementValue(config) as boolean,
+        ),
+      );
 
       const getConfigMatch = searchableText.match(
         getStatsigAPIGetConfigRegex(language, config),
       );
-      addReplacementEdit(getConfigMatch, getConfigReplacement(language));
+      addReplacementEdit(
+        getConfigMatch,
+        getConfigReplacement(
+          language,
+          this.getReplacementValue(config) as Record<string, unknown>,
+        ),
+      );
 
       const getExperimentMatch = searchableText.match(
         getStatsigAPIGetExperimentRegex(language, config),
       );
       addReplacementEdit(
         getExperimentMatch,
-        getExperimentReplacement(language),
+        getExperimentReplacement(
+          language,
+          this.getReplacementValue(config) as Record<string, unknown>,
+        ),
       );
 
       const variableAssignmentMatch = searchableText.match(
@@ -209,7 +240,7 @@ const removeAllStaleConfgsCommandHandler = async () => {
       }`,
     );
   } else {
-    await vsc.window.showInformationMessage(`Something went wrong`);
+    await vsc.window.showInformationMessage('Something went wrong');
   }
 };
 

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/prefer-regexp-exec */
 import * as vsc from 'vscode';
-import { getStaleConfig } from '../lib/configUtils';
+import { getStaleConfigWithReason } from '../lib/configUtils';
 import { CONFIG_NAME_WITH_QUOTES_REGEX } from '../lib/languageUtils';
 
 export enum DiagnosticCode {
@@ -32,7 +32,8 @@ export function findStaleConfigs(
     if (configSearch !== null) {
       configSearch.forEach((match) => {
         const configName = match.substring(1, match.length - 1);
-        if (getStaleConfig(configName).length > 0) {
+        const staleConfig = getStaleConfigWithReason(configName);
+        if (staleConfig) {
           staleConfigs.push(configName);
           const quoteOffset = match.indexOf(configName);
           const index = lineOfText.text.indexOf(match) + quoteOffset;
@@ -46,7 +47,7 @@ export function findStaleConfigs(
             createDiagnostic(DiagnosticCode.staleCheck, {
               range,
               configName,
-              reason: '0 checks in the past 30 days',
+              reason: staleConfig.reason,
             }),
           );
         }
@@ -86,6 +87,7 @@ function createDiagnostic(
 export function subscribeToDocumentChanges(
   context: vsc.ExtensionContext,
   diagnosticCollection: vsc.DiagnosticCollection,
+  additionalListeners: vsc.Event<unknown>[] = [],
 ): void {
   if (vsc.window.activeTextEditor) {
     refreshDiagnostics(
@@ -112,4 +114,17 @@ export function subscribeToDocumentChanges(
       diagnosticCollection.delete(doc.uri),
     ),
   );
+
+  additionalListeners.forEach((listener) => {
+    context.subscriptions.push(
+      listener(() => {
+        if (vsc.window.activeTextEditor) {
+          refreshDiagnostics(
+            vsc.window.activeTextEditor.document,
+            diagnosticCollection,
+          );
+        }
+      }),
+    );
+  });
 }

@@ -23,15 +23,28 @@ export default class ProjectsState extends State<ProjectsContract> {
   public static init(ctx: vsc.ExtensionContext, updateHook?: () => void): void {
     this._instance = new ProjectsState('projects', ctx, () => {
       updateHook?.call(void 0);
-      this._instance.updateCallback();
+      this._instance.updateCallback(false);
     });
 
-    this._instance.updateCallback();
+    this._instance.updateCallback(true);
+  }
+
+  private mainProject: string | undefined;
+  public setMainProject(projectName: string): void {
+    this.mainProject = projectName;
+    this.updateHook?.call(void 0);
+  }
+  public getMainProject(): string | undefined {
+    return this.mainProject;
   }
 
   private configIndex: Map<string, StatsigConfig[]> = new Map();
-  public findConfig(name: string): StatsigConfig[] {
-    return this.configIndex.get(name) ?? [];
+  public findConfig(name: string, projectName?: string): StatsigConfig[] {
+    const configs = this.configIndex.get(name) ?? [];
+    if (projectName) {
+      return configs.filter((c) => c.projectName === projectName);
+    }
+    return configs;
   }
 
   public getConfigIndex(): Map<string, StatsigConfig[]> {
@@ -55,7 +68,7 @@ export default class ProjectsState extends State<ProjectsContract> {
       : this.configIndex.set(ent.name, [config]);
   }
 
-  private updateCallback(): void {
+  private updateCallback(initialLoad: boolean): void {
     this.configIndex = new Map();
     if (this.value === undefined) {
       return;
@@ -70,5 +83,9 @@ export default class ProjectsState extends State<ProjectsContract> {
         this.addConfigToIndex(p, c, 'dynamic_config'),
       );
     });
+
+    if (initialLoad && this.value.projects.length > 0) {
+      this.setMainProject(this.value.projects[0].name);
+    }
   }
 }
