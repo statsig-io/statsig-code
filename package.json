@@ -72,17 +72,11 @@
           "markdownDescription": "The tier to use when making `https` api calls and console redirects. `prod` is recommended, any other value might be unstable.",
           "enum": [
             "prod",
-            "latest",
-            "us-west-2",
-            "us-east-2",
-            "ap-south-1"
+            "latest"
           ],
           "enumDescriptions": [
             "Automatically chooses a live tier with low latency.",
-            "Canary, Continuous-Deployment tier. Might be unstable.",
-            "Oregon, US.",
-            "Ohio, US.",
-            "Mumbai, IN."
+            "Canary, Continuous-Deployment tier. Might be unstable."
           ]
         }
       }
