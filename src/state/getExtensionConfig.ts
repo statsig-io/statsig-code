@@ -11,7 +11,7 @@ type StatsigExtensionConfiguration = {
     enableDiagnostics: boolean;
   };
   web: {
-    tier: 'prod' | 'latest' | 'us-east-2' | 'us-west-2' | 'ap-south-1';
+    tier: 'prod' | 'latest';
   };
 };
 
