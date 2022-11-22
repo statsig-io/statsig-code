@@ -1,5 +1,10 @@
 # Change Log
 
+## 1.1.0
+- Checks in past 30 days on hover.
+- Highlight stale gates/config in editor.
+- Stale gates/config quick cleanup command.
+
 ## 1.0.6
 
 - Upgrade dependencies. 
