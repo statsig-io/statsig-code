@@ -17,6 +17,9 @@
 
   ![CodeLens](media/codelens.png)
 
+- Diagnostics.
+  ![Diagnostics: Stale Gate](media/stale_gate_diagnostic.png)
+
 - Keyboard Shortcuts.
 
   ![Keyboard Shortcuts](media/keyboard.gif)
@@ -29,6 +32,7 @@ This extension contributes the following settings:
 - `statsig.refresh.interval`: interval in minutes between each background refresh.
 - `statsig.textEditor.enableHoverTooltips`: enable/disable tooltips when hovering over strings that match flag/config names.
 - `statsig.textEditor.enableCodeLens`: enable/disable CodeLens on strings that match flag/config names. Disabled by default.
+- `statsig.textEditor.enableDiagnostics`: enable/disable Diagnostics on strings that match flag/config names. Disabled by default.
 - `statsig.web.tier`: selects the set of web servers to hit when querying Statsig for data.
 
 ## Release Notes
