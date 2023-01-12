@@ -18,6 +18,7 @@
   ![CodeLens](media/codelens.png)
 
 - Diagnostics.
+
   ![Diagnostics: Stale Gate](media/stale_gate_diagnostic.png)
 
 - Keyboard Shortcuts.
