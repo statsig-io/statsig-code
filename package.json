@@ -2,7 +2,7 @@
   "name": "statsig",
   "displayName": "Statsig",
   "publisher": "statsig-vscode",
-  "description": "Build. Measure. Ship!",
+  "description": "Feature Flags & A/B Tests For Data-Driven Product Building.",
   "version": "1.1.2",
   "license": "ISC",
   "homepage": "https://www.statsig.com",
