@@ -94,6 +94,10 @@
       {
         "view": "statsig.projects",
         "contents": "Welcome to Statsig! 🙌\nPlease sign in to generate an access token.\n[Sign In](https://console.statsig.com/integrations/vscode)\nThis extension is open-source and [hosted on GitHub](https://github.com/statsig-io/statsig-code). Contributions are welcome--we might even send you a t-shirt!"
+      },
+      {
+        "view": "statsig.onboarding",
+        "contents": "Let's get started with your steps!"
       }
     ],
     "views": {
@@ -101,6 +105,11 @@
         {
           "id": "statsig.projects",
           "name": "Projects",
+          "icon": "media/logo.svg"
+        },
+        {
+          "id": "statsig.onboarding",
+          "name": "Get Set Up",
           "icon": "media/logo.svg"
         }
       ]
