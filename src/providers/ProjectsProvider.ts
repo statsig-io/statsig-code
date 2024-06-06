@@ -1,7 +1,7 @@
 import * as vsc from 'vscode';
 
-import { ErrorEntry } from './entries/ErrorEntry';
 import { Entry } from './entries/Entry';
+import { ErrorEntry } from './entries/ErrorEntry';
 import { ProjectEntry } from './entries/ProjectEntry';
 import ProjectsState from '../state/ProjectsState';
 
@@ -62,7 +62,7 @@ export default class ProjectsProvider implements vsc.TreeDataProvider<Entry> {
             p.name === mainProject
               ? { label: p.name, highlights: [[0, p.name.length]] }
               : p.name,
-            vsc.TreeItemCollapsibleState.Expanded,
+            vsc.TreeItemCollapsibleState.Collapsed,
             p,
           ),
       ),
