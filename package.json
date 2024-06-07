@@ -137,6 +137,11 @@
         "icon": "$(ports-open-browser-icon)"
       },
       {
+        "command": "statsig.toggleFavourite",
+        "title": "Switch the pin status of a config",
+        "icon": "$(star-empty)"
+      },
+      {
         "command": "statsig.selectMainProject",
         "title": "Select Main Project",
         "icon": "$(star)"
@@ -201,6 +206,11 @@
           "group": "inline"
         },
         {
+          "command": "statsig.toggleFavourite",
+          "when": "viewItem == statsig_config",
+          "group": "inline"
+        },
+        {
           "command": "statsig.selectMainProject",
           "when": "viewItem =~ /project_entry.*/",
           "group": "inline"
@@ -218,6 +228,10 @@
         },
         {
           "command": "statsig.openTreeViewEntryInBrowser",
+          "when": "false"
+        },
+        {
+          "command": "statsig.toggleFavourite",
           "when": "false"
         },
         {

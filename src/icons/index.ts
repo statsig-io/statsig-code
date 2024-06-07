@@ -1,26 +1,49 @@
 import * as vsc from 'vscode';
 
-export const CONFIG_PASS_ICON = new vsc.ThemeIcon(
-  'circle-filled',
-  new vsc.ThemeColor('charts.green'),
-);
+import { StatsigConfig } from '../state/ProjectsState';
 
-export const CONFIG_MIXED_ICON = new vsc.ThemeIcon(
-  'circle-filled',
-  new vsc.ThemeColor('charts.yellow'),
-);
+export enum ConfigType {
+  pass,
+  mixed,
+  fail,
+  enabled,
+  disabled,
+}
 
-export const CONFIG_FAIL_ICON = new vsc.ThemeIcon(
-  'circle-filled',
-  new vsc.ThemeColor('charts.red'),
-);
+export const mp = new Map<string, boolean>();
 
-export const CONFIG_ENABLED_ICON = new vsc.ThemeIcon(
-  'circle-outline',
-  new vsc.ThemeColor('charts.green'),
-);
+export const getConfigThemeIcon = (
+  configData: StatsigConfig,
+  configType: ConfigType,
+): vsc.ThemeIcon => {
+  let themeIconType: string;
+  const isFavourite: boolean =
+    mp.get(
+      `${configData.projectName},${configData.type},${configData.data.name}`,
+    ) ?? false;
 
-export const CONFIG_DISABLED_ICON = new vsc.ThemeIcon(
-  'circle-outline',
-  new vsc.ThemeColor('charts.red'),
-);
+  if ([ConfigType.enabled, ConfigType.disabled].includes(configType)) {
+    themeIconType = isFavourite ? 'star-empty' : 'circle-outline';
+  } else {
+    themeIconType = isFavourite ? 'star-full' : 'circle-filled';
+  }
+
+  let themeColourString: string;
+  switch (configType) {
+    case ConfigType.pass:
+    case ConfigType.enabled:
+      themeColourString = 'green';
+      break;
+    case ConfigType.fail:
+    case ConfigType.disabled:
+      themeColourString = 'red';
+      break;
+    default:
+      themeColourString = 'yellow';
+  }
+
+  return new vsc.ThemeIcon(
+    themeIconType,
+    new vsc.ThemeColor(`charts.${themeColourString}`),
+  );
+};

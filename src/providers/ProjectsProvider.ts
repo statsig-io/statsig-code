@@ -6,8 +6,6 @@ import { ProjectEntry } from './entries/ProjectEntry';
 import ProjectsState from '../state/ProjectsState';
 
 export default class ProjectsProvider implements vsc.TreeDataProvider<Entry> {
-  constructor(private ctx: vsc.ExtensionContext) {}
-
   private _onDidChangeTreeData: vsc.EventEmitter<
     Entry | undefined | null | void
   > = new vsc.EventEmitter<Entry | undefined | null | void>();

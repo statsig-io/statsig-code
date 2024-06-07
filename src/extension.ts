@@ -1,29 +1,50 @@
-import * as vsc from 'vscode';
-import * as openConsole from './commands/openConsole';
-import * as signIn from './commands/signIn';
-import * as signOut from './commands/signOut';
 import * as copyToClipboard from './commands/copyToClipboard';
-import * as selectMainProject from './commands/selectMainProject';
 import * as feelingLucky from './commands/feelingLucky';
 import * as fetchConfigs from './commands/fetchConfigs';
 import * as openConfigInConsole from './commands/openConfigInConsole';
+import * as openConsole from './commands/openConsole';
 import * as openTreeViewEntryInBrowser from './commands/openTreeViewEntryInBrowser';
-import UriHandler from './UriHandler';
-import ProjectsProvider from './providers/ProjectsProvider';
-import AuthState from './state/AuthState';
-import ProjectsState from './state/ProjectsState';
-import ConfigHoverProvider from './providers/ConfigHoverProvider';
-import getExtensionConfig from './state/getExtensionConfig';
-import ConfigCodeLensProvider from './providers/ConfigCodeLensProvider';
-import { subscribeToDocumentChanges } from './providers/diagnostics';
+import * as selectMainProject from './commands/selectMainProject';
+import * as signIn from './commands/signIn';
+import * as signOut from './commands/signOut';
+import * as toggleFavourite from './commands/toggleFavourite';
+import * as vsc from 'vscode';
+
 import {
-  registerCommands,
   ConfigCodeActionProvider,
+  registerCommands,
 } from './providers/ConfigCodeActionProvider';
 
+import AuthState from './state/AuthState';
+import ConfigCodeLensProvider from './providers/ConfigCodeLensProvider';
+import ConfigHoverProvider from './providers/ConfigHoverProvider';
+import ProjectsProvider from './providers/ProjectsProvider';
+import ProjectsState from './state/ProjectsState';
+import UriHandler from './UriHandler';
+import getExtensionConfig from './state/getExtensionConfig';
+import { subscribeToDocumentChanges } from './providers/diagnostics';
+
 export function activate(context: vsc.ExtensionContext): void {
+  const globalState: vsc.Memento = context.globalState;
+
+  const getData = (key: string): boolean => {
+    return key ? globalState.get(key) ?? false : false;
+  };
+
+  const getCommandDisposable = vsc.commands.registerCommand(
+    'statsig.getData',
+    getData,
+  );
+
+  const toggleCommandDisposable = vsc.commands.registerCommand(
+    'statsig.toggleData',
+    async (key: string): Promise<void> => {
+      await globalState.update(key, !getData(key));
+    },
+  );
+
   const config = getExtensionConfig();
-  const projectsProvider = new ProjectsProvider(context);
+  const projectsProvider = new ProjectsProvider();
   const statsigProjectsView = vsc.window.createTreeView('statsig.projects', {
     treeDataProvider: projectsProvider,
   });
@@ -39,10 +60,18 @@ export function activate(context: vsc.ExtensionContext): void {
     );
   }
 
-  const refreshViews = () => {
+  const refreshViews = (): void => {
     projectsProvider.refresh();
     codeLensProvider?.refresh();
   };
+
+  const refreshViewsDisposable = vsc.commands.registerCommand(
+    'statsig.refreshViews',
+    async (): Promise<void> => {
+      refreshViews();
+      return Promise.resolve();
+    },
+  );
 
   AuthState.init(context, refreshViews);
   ProjectsState.init(context, refreshViews);
@@ -53,6 +82,7 @@ export function activate(context: vsc.ExtensionContext): void {
 
   context.subscriptions.push(
     openTreeViewEntryInBrowser.register(),
+    toggleFavourite.register(),
     openConfigInConsole.register(),
     openConsole.register(),
     signIn.register(),
@@ -65,6 +95,9 @@ export function activate(context: vsc.ExtensionContext): void {
     vsc.window.registerTreeDataProvider('statsig.projects', projectsProvider),
     statsigProjectsView,
     staleConfigDiagnostic,
+    getCommandDisposable,
+    toggleCommandDisposable,
+    refreshViewsDisposable,
   );
 
   if (config.textEditor.enableDiagnostics) {

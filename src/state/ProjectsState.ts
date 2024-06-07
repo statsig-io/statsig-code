@@ -1,9 +1,11 @@
 import * as vsc from 'vscode';
+
 import {
   APIConfigEntity,
   DeveloperProject,
   ProjectsContract,
 } from '../contracts/projects';
+
 import State from './State';
 
 export type ConfigType = 'feature_gate' | 'dynamic_config';

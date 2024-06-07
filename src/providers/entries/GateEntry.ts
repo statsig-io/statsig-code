@@ -1,14 +1,9 @@
-import {
-  CONFIG_DISABLED_ICON,
-  CONFIG_FAIL_ICON,
-  CONFIG_MIXED_ICON,
-  CONFIG_PASS_ICON,
-} from '../../icons';
+import { ConfigType, getConfigThemeIcon } from '../../icons';
 
-import { getStaticResult } from '../../lib/configUtils';
-import { StatsigConfig } from '../../state/ProjectsState';
 import { APIConfigEntry } from './APIConfigEntry';
 import { ConfigGroupEntry } from './ConfigGroupEntry';
+import { StatsigConfig } from '../../state/ProjectsState';
+import { getStaticResult } from '../../lib/configUtils';
 
 export class GateEntry extends APIConfigEntry {
   constructor(
@@ -17,17 +12,17 @@ export class GateEntry extends APIConfigEntry {
   ) {
     super(data, parent);
     if (!data.data.enabled) {
-      this.iconPath = CONFIG_DISABLED_ICON;
+      this.iconPath = getConfigThemeIcon(data, ConfigType.disabled);
     } else {
       switch (getStaticResult(this.data)) {
         case 'pass':
-          this.iconPath = CONFIG_PASS_ICON;
+          this.iconPath = getConfigThemeIcon(data, ConfigType.pass);
           break;
         case 'fail':
-          this.iconPath = CONFIG_FAIL_ICON;
+          this.iconPath = getConfigThemeIcon(data, ConfigType.fail);
           break;
         case 'mixed':
-          this.iconPath = CONFIG_MIXED_ICON;
+          this.iconPath = getConfigThemeIcon(data, ConfigType.mixed);
           break;
       }
     }

@@ -1,7 +1,8 @@
-import { CONFIG_ENABLED_ICON, CONFIG_DISABLED_ICON } from '../../icons';
-import { StatsigConfig } from '../../state/ProjectsState';
+import { ConfigType, getConfigThemeIcon } from '../../icons';
+
 import { APIConfigEntry } from './APIConfigEntry';
 import { ConfigGroupEntry } from './ConfigGroupEntry';
+import { StatsigConfig } from '../../state/ProjectsState';
 
 export class ConfigEntry extends APIConfigEntry {
   constructor(
@@ -11,7 +12,8 @@ export class ConfigEntry extends APIConfigEntry {
     super(data, parent);
   }
 
-  iconPath = this.data.data.enabled
-    ? CONFIG_ENABLED_ICON
-    : CONFIG_DISABLED_ICON;
+  iconPath = getConfigThemeIcon(
+    this.data,
+    this.data.data.enabled ? ConfigType.enabled : ConfigType.disabled,
+  );
 }
