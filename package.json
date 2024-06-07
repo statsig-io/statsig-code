@@ -105,12 +105,14 @@
         {
           "id": "statsig.projects",
           "name": "Projects",
-          "icon": "media/logo.svg"
+          "icon": "media/logo.svg",
+          "visibility": "collapsed"
         },
         {
           "id": "statsig.onboarding",
           "name": "Get Set Up",
-          "icon": "media/logo.svg"
+          "icon": "media/logo.svg",
+          "visibility": "collapsed"
         }
       ]
     },
