@@ -1,7 +1,8 @@
 import * as vsc from 'vscode';
+
+import { ConfigGroupEntry } from './ConfigGroupEntry';
 import { DeveloperProject } from '../../contracts/projects';
 import { Entry } from './Entry';
-import { ConfigGroupEntry } from './ConfigGroupEntry';
 
 export class ProjectEntry extends Entry {
   constructor(
@@ -20,7 +21,7 @@ export class ProjectEntry extends Entry {
     return Promise.resolve([
       new ConfigGroupEntry(
         'Feature Gates',
-        vsc.TreeItemCollapsibleState.Expanded,
+        vsc.TreeItemCollapsibleState.Collapsed,
         this.data.feature_gates.map((c) => {
           return {
             projectID: this.data.id,
@@ -33,7 +34,7 @@ export class ProjectEntry extends Entry {
       ),
       new ConfigGroupEntry(
         'Dynamic Configs',
-        vsc.TreeItemCollapsibleState.Expanded,
+        vsc.TreeItemCollapsibleState.Collapsed,
         this.data.dynamic_configs.map((c) => {
           return {
             projectID: this.data.id,
