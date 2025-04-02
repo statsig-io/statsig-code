@@ -47,7 +47,10 @@ export class ConfigCodeActionProvider implements vsc.CodeActionProvider {
 
     const actions: vsc.CodeAction[] = [];
     context.diagnostics
-      .filter((diagnostic: vsc.Diagnostic) => diagnostic.code === DiagnosticCode.staleCheck)
+      .filter(
+        (diagnostic: vsc.Diagnostic) =>
+          diagnostic.code === DiagnosticCode.staleCheck,
+      )
       .forEach((diagnostic: vsc.Diagnostic) => {
         actions.push(
           this.newCodeAction(doc, range, diagnostic, {
@@ -254,9 +257,8 @@ export function registerCommands(
       CODE_ACTIONS.removeStaleConfig.command,
       removeStaleConfigCommandHandler,
     ),
-    vsc.commands.registerCommand(
-      'statsig.cleanupStale',
-      () => removeAllStaleConfgsCommandHandler(output),
+    vsc.commands.registerCommand('statsig.cleanupStale', () =>
+      removeAllStaleConfgsCommandHandler(output),
     ),
   );
 }
