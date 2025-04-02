@@ -15,6 +15,7 @@ export type SupportedLanguageType = typeof SUPPORTED_LANGUAGES[number];
 export const SUPPORTED_FILE_EXTENSIONS = [
   'js',
   'ts',
+  'tsx',
   'py',
   'go',
   'rb',

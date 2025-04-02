@@ -47,8 +47,8 @@ export class ConfigCodeActionProvider implements vsc.CodeActionProvider {
 
     const actions: vsc.CodeAction[] = [];
     context.diagnostics
-      .filter((diagnostic) => diagnostic.code === DiagnosticCode.staleCheck)
-      .forEach((diagnostic) => {
+      .filter((diagnostic: vsc.Diagnostic) => diagnostic.code === DiagnosticCode.staleCheck)
+      .forEach((diagnostic: vsc.Diagnostic) => {
         actions.push(
           this.newCodeAction(doc, range, diagnostic, {
             ...CODE_ACTIONS.removeStaleConfig,
@@ -197,8 +197,9 @@ const removeStaleConfigCommandHandler = (config: string, success: boolean) => {
   }
 };
 
-const removeAllStaleConfgsCommandHandler = async () => {
-  const output = vsc.window.createOutputChannel('Statsig output');
+const removeAllStaleConfgsCommandHandler = async (
+  output: vsc.OutputChannel,
+) => {
   const edit = new vsc.WorkspaceEdit();
   const files = await vsc.workspace.findFiles(
     `**/*.{${SUPPORTED_FILE_EXTENSIONS.join()}}`,
@@ -226,8 +227,8 @@ const removeAllStaleConfgsCommandHandler = async () => {
   output.appendLine('');
   output.appendLine('Summary of Instances Removed: ');
   Object.entries(configCounts)
-    .sort((a, b) => b[1] - a[1])
-    .forEach((counts) => {
+    .sort((a: [string, number], b: [string, number]) => b[1] - a[1])
+    .forEach((counts: [string, number]) => {
       output.appendLine(`${counts[0]}: ${counts[1]}`);
     });
   const success = await vsc.workspace.applyEdit(edit);
@@ -244,7 +245,10 @@ const removeAllStaleConfgsCommandHandler = async () => {
   }
 };
 
-export function registerCommands(context: vsc.ExtensionContext): void {
+export function registerCommands(
+  context: vsc.ExtensionContext,
+  output: vsc.OutputChannel,
+): void {
   context.subscriptions.push(
     vsc.commands.registerCommand(
       CODE_ACTIONS.removeStaleConfig.command,
@@ -252,7 +256,7 @@ export function registerCommands(context: vsc.ExtensionContext): void {
     ),
     vsc.commands.registerCommand(
       'statsig.cleanupStale',
-      removeAllStaleConfgsCommandHandler,
+      () => removeAllStaleConfgsCommandHandler(output),
     ),
   );
 }

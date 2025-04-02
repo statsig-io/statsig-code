@@ -22,6 +22,9 @@ import {
 } from './providers/ConfigCodeActionProvider';
 
 export function activate(context: vsc.ExtensionContext): void {
+  const outputChannel = vsc.window.createOutputChannel('Statsig output');
+  context.subscriptions.push(outputChannel);
+
   const config = getExtensionConfig();
   const projectsProvider = new ProjectsProvider(context);
   const statsigProjectsView = vsc.window.createTreeView('statsig.projects', {
@@ -91,7 +94,7 @@ export function activate(context: vsc.ExtensionContext): void {
       providedCodeActionKinds: ConfigCodeActionProvider.providedCodeActionKinds,
     },
   );
-  registerCommands(context);
+  registerCommands(context, outputChannel);
 
   void fetchConfigs.run({
     throttle: true,
