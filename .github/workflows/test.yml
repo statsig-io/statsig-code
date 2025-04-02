@@ -15,7 +15,7 @@ jobs:
       - name: Setup node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 10.x
+          node-version: "23.x"
       - run: yarn install --frozen-lockfile
       - run: yarn test-compile
       - run: yarn compile
