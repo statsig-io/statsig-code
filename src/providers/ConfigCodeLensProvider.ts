@@ -26,13 +26,7 @@ export default class ConfigCodeLensProvider implements vsc.CodeLensProvider {
   }
 
   resolveCodeLens(lens: ConfigCodeLens): vsc.ProviderResult<ConfigCodeLens> {
-    return (async () => {
-      await fetchConfigs.run({
-        throttle: true,
-        silent: true,
-        incremental: true,
-      });
-
+    return (() => {
       const updatedConfig = ProjectsState.instance
         .findConfig(lens.config.data.name)
         .find((c) => c.projectID === lens.config.projectID);
