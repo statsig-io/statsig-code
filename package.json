@@ -12,7 +12,7 @@
   },
   "bugs": {
     "url": "https://github.com/statsig-io/statsig-code/issues",
-    "email": "support@statsig.io"
+    "email": "support@statsig.com"
   },
   "engines": {
     "vscode": "^1.56.0"
