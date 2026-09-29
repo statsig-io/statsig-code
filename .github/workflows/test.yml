@@ -8,7 +8,7 @@ jobs:
     strategy:
       matrix:
         os: [macos-latest, ubuntu-latest, windows-latest]
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ fromJSON('{"macos-latest":"blacksmith-6vcpu-macos-latest","ubuntu-latest":"blacksmith-2vcpu-ubuntu-2404","windows-latest":"blacksmith-2vcpu-windows-2025"}')[matrix.os] }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
